@@ -2,7 +2,7 @@ import sequelize from '../db.js';
 import { DataTypes } from 'sequelize';
 
 export const User = sequelize.define('user', {
-  id: { type: DataTypes.NUMBER, autoIncrement: true, primaryKey: true },
+  id: { type: DataTypes.BIGINT, autoIncrement: true, primaryKey: true },
   email: { type: DataTypes.STRING, unique: true, allowNull: false },
   password: { type: DataTypes.STRING, allowNull: false },
   role: { type: DataTypes.STRING, defaultValue: 'USER' },
@@ -10,8 +10,8 @@ export const User = sequelize.define('user', {
 
 export const AccountStatement = sequelize.define('account_statement', {
   id: { type: DataTypes.BIGINT, autoIncrement: true, primaryKey: true },
-  transferAmount: { type: DataTypes.NUMBER, defaultValue: 0 },
-  depositAmount: { type: DataTypes.NUMBER, defaultValue: 0 },
+  transferAmount: { type: DataTypes.DECIMAL, defaultValue: 0 },
+  depositAmount: { type: DataTypes.DECIMAL, defaultValue: 0 },
 });
 
 export const Profile = sequelize.define('profile', {
@@ -23,22 +23,14 @@ export const Profile = sequelize.define('profile', {
   profileImg: { type: DataTypes.STRING },
 });
 
-export const Calendar = sequelize.define('calendar', {
-  id: { type: DataTypes.BIGINT, autoIncrement: true, primaryKey: true },
-});
-
-export const TransactionHistory = sequelize.define('transaction_history', {
-  id: { type: DataTypes.BIGINT, autoIncrement: true, primaryKey: true },
-});
-
 export const Account = sequelize.define('account', {
   id: { type: DataTypes.BIGINT, autoIncrement: true, primaryKey: true },
-  accountBalance: { type: DataTypes.NUMBER, defaultValue: 0 },
+  accountBalance: { type: DataTypes.DECIMAL, defaultValue: 0 },
 });
 
 export const Transaction = sequelize.define('transaction', {
   id: { type: DataTypes.BIGINT, autoIncrement: true, primaryKey: true },
-  amount: { type: DataTypes.NUMBER, allowNull: false },
+  amount: { type: DataTypes.DECIMAL, allowNull: false },
   currency: { type: DataTypes.STRING, allowNull: false }, //валюта на русском
   date: { type: DataTypes.DATE, allowNull: false },
   status: { type: DataTypes.STRING, allowNull: false },
@@ -52,6 +44,27 @@ export const Card = sequelize.define('card', {
   cardCVC: { type: DataTypes.STRING, allowNull: false },
   cardHolderName: { type: DataTypes.STRING, allowNull: false },
   cardCustomeName: { type: DataTypes.STRING, allowNull: false },
+  cardBalance: { type: DataTypes.DECIMAL, allowNull: false, defaultValue: 1000 },
+});
+
+export const Basket = sequelize.define('basket', {
+  id: { type: DataTypes.BIGINT, autoIncrement: true, primaryKey: true },
+});
+
+export const BasketService = sequelize.define('basket_service', {
+  id: { type: DataTypes.BIGINT, autoIncrement: true, primaryKey: true },
+});
+
+export const Service = sequelize.define('service', {
+  id: { type: DataTypes.BIGINT, autoIncrement: true, primaryKey: true },
+  name: { type: DataTypes.STRING, allowNull: false },
+  amount: { type: DataTypes.DECIMAL },
+  interest: { type: DataTypes.DECIMAL, allowNull: false },
+  serviceDate: { type: DataTypes.DATE },
+  maturityDate: { type: DataTypes.DATE },
+  duration: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 10 },
+  minSum: { type: DataTypes.DECIMAL, allowNull: false, defaultValue: 100 },
+  type: { type: DataTypes.STRING, allowNull: false, defaultValue: 'DEPOSIT' },
 });
 
 export const Bank = sequelize.define('bank', {
@@ -83,32 +96,35 @@ export const BankNews = sequelize.define('bank_news', {
   img: { type: DataTypes.STRING },
 });
 
-User.hasOne(AccountStatement);
-AccountStatement.belongsTo(User);
-
 User.hasOne(Profile);
 Profile.belongsTo(User);
-
-User.hasOne(Calendar);
-Calendar.belongsTo(User);
-
-User.hasOne(TransactionHistory);
-Transaction.belongsTo(User);
 
 User.hasOne(Account);
 Account.belongsTo(User);
 
-Calendar.hasMany(Transaction);
-Transaction.belongsTo(Calendar);
+Account.hasOne(AccountStatement);
+AccountStatement.belongsTo(Account);
 
-TransactionHistory.hasMany(Transaction);
-Transaction.belongsTo(TransactionHistory);
+Account.hasMany(Transaction);
+Transaction.belongsTo(Account);
 
 Account.hasMany(Card);
 Card.belongsTo(Account);
 
-Bank.hasMany(Partner);
-Partner.belongsTo(Bank);
+Account.hasOne(Basket);
+Basket.belongsTo(Account);
+
+Basket.hasMany(BasketService);
+BasketService.belongsTo(Basket);
+
+Service.hasMany(BasketService);
+BasketService.belongsTo(Service);
+
+Bank.hasMany(Service);
+Service.belongsTo(Bank);
 
 Bank.hasMany(BankNews);
 BankNews.belongsTo(Bank);
+
+Bank.hasMany(Partner);
+Partner.belongsTo(Bank);
