@@ -39,12 +39,12 @@ export const Transaction = sequelize.define('transaction', {
 
 export const Card = sequelize.define('card', {
   id: { type: DataTypes.BIGINT, autoIncrement: true, primaryKey: true },
-  cardNumber: { type: DataTypes.STRING, unique: true, allowNull: false },
-  cardDate: { type: DataTypes.DATE, allowNull: false },
-  cardCVC: { type: DataTypes.STRING, allowNull: false },
-  cardHolderName: { type: DataTypes.STRING, allowNull: false },
-  cardCustomeName: { type: DataTypes.STRING, allowNull: false },
-  cardBalance: { type: DataTypes.DECIMAL, allowNull: false, defaultValue: 1000 },
+  Number: { type: DataTypes.STRING, unique: true, allowNull: false },
+  Date: { type: DataTypes.DATE, allowNull: false },
+  CVC: { type: DataTypes.STRING, allowNull: false },
+  HolderName: { type: DataTypes.STRING, allowNull: false },
+  CustomeName: { type: DataTypes.STRING, allowNull: false },
+  Balance: { type: DataTypes.DECIMAL, allowNull: false, defaultValue: 1000 },
 });
 
 export const Basket = sequelize.define('basket', {
@@ -69,7 +69,7 @@ export const Service = sequelize.define('service', {
 
 export const Bank = sequelize.define('bank', {
   id: { type: DataTypes.BIGINT, autoIncrement: true, primaryKey: true },
-  bankName: { type: DataTypes.STRING, unique: true, allowNull: false, defaultValue: 'Bank' },
+  name: { type: DataTypes.STRING, unique: true, allowNull: false, defaultValue: 'Bank' },
   telehoneNumber: { type: DataTypes.STRING, unique: true, allowNull: false, defaultValue: '+375 (29) 000 00 00' },
   img: {
     type: DataTypes.STRING,
