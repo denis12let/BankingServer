@@ -1,5 +1,5 @@
-import ApiError from '../error/ApiError.js';
-import { Bank } from '../models/models.js';
+import ApiError from '../../error/ApiError.js';
+import { Bank } from '../../models/models.js';
 
 class BankServices {
   async findById(id) {

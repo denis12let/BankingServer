@@ -1,6 +1,4 @@
-import ApiError from '../error/ApiError.js';
-import { Bank } from '../models/models.js';
-import bankServices from '../services/BankServices.js';
+import bankServices from '../../services/bankServices/bankServices.js';
 
 class BankController {
   async get(req, res, next) {

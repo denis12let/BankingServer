@@ -1,5 +1,5 @@
 import express from 'express';
-import bankNewsController from '../controllers/bankNewsController.js';
+import bankNewsController from '../../controllers/bankControllers/bankNewsController.js';
 
 const router = express.Router();
 

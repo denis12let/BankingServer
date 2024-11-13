@@ -1,35 +1,42 @@
 import express from 'express';
-import account from './accountRouter.js';
-import accountStatement from './accountStatementRouter.js';
-import bankNews from './bankNewsRouter.js';
-import bank from './bankRouter.js';
-import basket from './basketRouter.js';
-import card from './cardRouter.js';
-import partner from './partnerRouter.js';
-import profile from './profileRouter.js';
-import service from './serviceRouter.js';
-import transaction from './transactionRouter.js';
-import user from './userRouter.js';
+import account from './accountRoutes/accountRouter.js';
+import accountStatement from './accountRoutes/accountStatementRouter.js';
+import bankNews from './bankRoutes/bankNewsRouter.js';
+import bank from './bankRoutes/bankRouter.js';
+import basket from './accountRoutes/basketRouter.js';
+import card from './accountRoutes/cardRouter.js';
+import partner from './bankRoutes/partnerRouter.js';
+import profile from './userRoutes/profileRouter.js';
+import service from './bankRoutes/serviceRouter.js';
+import transaction from './accountRoutes/transactionRouter.js';
+import user from './userRoutes/userRouter.js';
 
 const router = express.Router();
-const accountRouters = express.Router();
-const bankRouters = express.Router();
+const accountRoutes = express.Router();
+const bankRoutes = express.Router();
+const userRoutes = express.Router();
 
-router.use('/accounts/:account', accountRouters);
-router.use('/bank', bankRouters);
+//Базовые
+router.use('/accounts/:account', accountRoutes);
+router.use('/bank', bankRoutes);
+router.use('/users', userRoutes);
 
-accountRouters.use('/cards', card);
-accountRouters.use('/accountStatement', accountStatement);
-accountRouters.use('/basket', basket);
-accountRouters.use('/profile', profile);
-accountRouters.use('/transaction', transaction);
+//Для аккаунта
+accountRoutes.use('/cards', card);
+accountRoutes.use('/accountStatement', accountStatement);
+accountRoutes.use('/basket', basket);
+accountRoutes.use('/transaction', transaction);
+
+//Пользовательские
+userRoutes.use(user);
+userRoutes.use('/profile', profile);
+
+//Банковские
+bankRoutes.use('/news', bankNews);
+bankRoutes.use(bank);
+bankRoutes.use('/partners', partner);
+bankRoutes.use('/services', service);
 
 router.use('/accounts', account);
-router.use('/services', service);
-router.use('/users', user);
-
-bankRouters.use('/news', bankNews);
-bankRouters.use(bank);
-bankRouters.use('/partners', partner);
 
 export default router;

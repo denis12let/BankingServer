@@ -1,5 +1,5 @@
-import ApiError from '../error/ApiError.js';
-import { Partner } from '../models/models.js';
+import ApiError from '../../error/ApiError.js';
+import { BankNews } from '../../models/models.js';
 import bankServices from './bankServices.js';
 
 class BankNewsServices {
@@ -20,7 +20,7 @@ class BankNewsServices {
 
   async create(data) {
     const bank = await bankServices.findById(1);
-    const { title, description, img, backgroundColor, textColor, bankId } = data;
+    const { title, description, img, backgroundColor, textColor } = data;
 
     if (!title || !description || !img) {
       throw ApiError.badRequest('Не все обязательные поля заполнены');

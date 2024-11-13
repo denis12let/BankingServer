@@ -1,9 +1,9 @@
-import partnerServices from '../services/partnerServices.js';
+import bankNewsServices from '../../services/bankServices/bankNewsServices.js';
 
 class BankNewsController {
   async getAll(req, res, next) {
     try {
-      const bankNews = await partnerServices.findAll();
+      const bankNews = await bankNewsServices.findAll();
 
       return res.json({ bankNews });
     } catch (error) {
