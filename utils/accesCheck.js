@@ -12,3 +12,9 @@ export const userAccessCheck = (userId, id, role) => {
     throw ApiError.forbidden('Нет доступа');
   }
 };
+
+export const accessCheck = (userId, id) => {
+  if (userId !== id) {
+    throw ApiError.forbidden('Нет доступа');
+  }
+};

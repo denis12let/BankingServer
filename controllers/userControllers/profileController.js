@@ -3,12 +3,11 @@ import profileServices from '../../services/userServices/profileServices.js';
 class ProfileController {
   async getOneById(req, res, next) {
     try {
-      const { id: userId, role } = req.user;
-      const id = req.params.id || id;
+      const id = req.params.id || req.user.id;
 
-      const profile = await profileServices.getById(userId, id, role);
+      const profile = await profileServices.getById(id);
 
-      return res.json({ user });
+      return res.json({ profile });
     } catch (error) {
       next(error);
     }
@@ -26,14 +25,24 @@ class ProfileController {
 
   async update(req, res, next) {
     try {
-      const userId = req.user.id;
-      const role = req.user.role;
-      const id = req.params.id;
-      const password = req.body.password;
+      const id = req.user.id;
 
-      const token = await userServices.update(userId, id, password, role);
+      const profile = await profileServices.update(id);
 
-      return res.json({ token });
+      return res.json({ profile });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async create(req, res, next) {
+    try {
+      const id = req.user.id;
+      const data = req.body;
+
+      const profile = await profileServices.create(data, id);
+
+      return res.json({ profile });
     } catch (error) {
       next(error);
     }

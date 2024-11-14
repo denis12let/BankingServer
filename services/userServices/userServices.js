@@ -2,7 +2,6 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import ApiError from '../../error/ApiError.js';
 import { User } from '../../models/models.js';
-import { userAccessCheck } from '../../utils/accesCheck.js';
 import { checkUserExists, validateRequiredFields } from '../../utils/validationUtills.js';
 
 const generateJwt = (id, email, role) => {
@@ -56,17 +55,15 @@ class UserServices {
     return token;
   }
 
-  async findById(userId, id, role) {
-    userAccessCheck(userId, id, role);
-
+  async findById(id) {
     const user = await User.findOne({ where: { id } });
     checkUserExists(user);
 
     return user;
   }
 
-  async getById(userId, id, role) {
-    const user = await this.findById(userId, id, role);
+  async getById(id, role) {
+    const user = await this.findById(id);
 
     if (role === 'USER') {
       return { email: user.email };
@@ -128,12 +125,11 @@ class UserServices {
     };
   }
 
-  async update(userId, password) {
+  async update(id, password) {
     const requiredFields = ['password'];
     validateRequiredFields({ password }, requiredFields);
 
-    const user = await User.findOne({ where: { id: userId } });
-    checkUserExists(user);
+    const user = await this.findById(id);
 
     const comparePassword = bcrypt.compareSync(password, user.password);
     if (comparePassword) {
@@ -149,12 +145,12 @@ class UserServices {
     return token;
   }
 
-  async delete(userId, id, role) {
-    console.log(id);
+  async delete(id, userId) {
+    if (id === userId) {
+      throw ApiError.badRequest('Нельзя удалить свой аккаунт');
+    }
 
-    const user = await this.findById(userId, id, role);
-
-    checkUserExists(user);
+    const user = await this.findById(id);
 
     let deletedUser = {
       id: user.id,

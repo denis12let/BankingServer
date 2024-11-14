@@ -39,12 +39,10 @@ class UserController {
 
   async getOneById(req, res, next) {
     try {
-      const { id: userId, role } = req.user;
-      let id = req.params.id || userId;
-      if (role === 'ADMIN') id = req.params.id;
-      else if (role === 'USER') id = userId;
+      const role = req.user.role;
+      const id = req.params.id || req.user.id;
 
-      const user = await userServices.getById(userId, id, role);
+      const user = await userServices.getById(id, role);
 
       return res.json({ user });
     } catch (error) {
@@ -88,10 +86,10 @@ class UserController {
 
   async update(req, res, next) {
     try {
-      const userId = req.user.id;
+      const id = req.user.id;
       const password = req.body.password;
 
-      const token = await userServices.update(userId, password);
+      const token = await userServices.update(id, password);
 
       return res.json({ token });
     } catch (error) {
@@ -102,10 +100,8 @@ class UserController {
   async delete(req, res, next) {
     try {
       const id = req.params.id;
-      const userId = req.user.id;
-      const role = req.user.role;
 
-      const user = await userServices.delete(userId, id, role);
+      const user = await userServices.delete(id, req.user.id);
 
       return res.json({ user });
     } catch (error) {

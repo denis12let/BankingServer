@@ -1,89 +1,76 @@
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
 import ApiError from '../../error/ApiError.js';
-import { Profile, User } from '../../models/models.js';
+import { Profile } from '../../models/models.js';
 import { userAccessCheck } from '../../utils/accesCheck.js';
 import { checkProfileExists, checkUserExists, validateRequiredFields } from '../../utils/validationUtills.js';
 
 class ProfileServices {
-  async findById(userId, id, role) {
-    userAccessCheck(userId, id, role);
+  getProfileWhithoutIdentifier(profile) {
+    const { passportIdentifier, profileWithoutIdentifier } = profile;
 
+    return profileWithoutIdentifier;
+  }
+
+  async findById(id) {
     const profile = await Profile.findOne({ where: { userId: id } });
     checkProfileExists(profile);
 
     return profile;
   }
 
-  async getById(userId, id, role) {
-    const profile = await this.findById(userId, id, role);
+  async getById(id) {
+    const profile = await this.findById(id);
 
-    const { passportIdentifier, ...profileData } = profile;
-
-    return profileData;
+    return this.getProfileWhithoutIdentifier(profile);
   }
 
   async findAll() {
     const profiles = await Profile.findAll();
 
-    const profilesWithoutIdentifier = profiles.map((profile) => {
-      const { passportIdentifier, ...profileWithoutIdentifier } = profile;
-      return profileWithoutIdentifier;
-    });
+    const profilesWithoutIdentifier = profiles.map((profile) => this.getProfileWhithoutIdentifier(profile));
 
     return profilesWithoutIdentifier;
   }
 
-  async create(data) {
-    const { email, password, role } = data;
-    const requiredFields = ['email', 'password', 'role'];
+  async create(data, userId) {
+    const { passportIdentifier, telephoneNumber, userName, userSurname, profileImg } = data;
+    const requiredFields = ['passportIdentifier', 'telephoneNumber', 'userName', 'userSurname'];
     validateRequiredFields(data, requiredFields);
 
-    const hashPassword = await bcrypt.hash(password, 5);
+    const candidateProfile = await this.findById(userId);
+    if (candidateProfile) {
+      throw ApiError.badRequest('Профиль пользователя уже существует');
+    }
 
-    const user = await User.create({
-      email,
-      password: hashPassword,
-      role,
+    const hashIdentifier = await bcrypt.hash(passportIdentifier, 5);
+
+    const profile = await Profile.create({
+      passportIdentifier: hashIdentifier,
+      telephoneNumber,
+      userName,
+      userSurname,
+      profileImg: profileImg || 'https://cdn-icons-png.flaticon.com/512/266/266033.png',
+      userId,
     });
 
-    return {
-      id: user.id,
-      email: user.email,
-      role: user.role,
-    };
+    return this.getProfileWhithoutIdentifier(profile);
   }
 
-  async update(userId, id, password, role) {
-    if (role === 'ADMIN') {
-      throw ApiError.forbidden('Нет доступа');
-    }
-    console.log(124);
-    const requiredFields = ['password'];
-    validateRequiredFields({ password }, requiredFields);
+  async update(id, data) {
+    const profile = await this.findById(id);
 
-    userAccessCheck(userId, id, role);
-    const user = await this.findById(userId, id, role);
-    checkUserExists(user);
+    Object.keys(data).forEach((key) => {
+      if (key === 'passportIdentifier' || key === 'telephoneNumber') {
+        throw ApiError.badRequest(`Поле ${key} неизменяемое `);
+      }
+      if (key in profile && data[key]) {
+        profile[key] = data[key];
+      }
+    });
 
-    if (password === undefined) {
-      throw ApiError.badRequest('Пожалуйста, введите пароль');
-    }
+    await profile.save();
 
-    let newPassword = password;
-    const comparePassword = bcrypt.compareSync(password, user.password);
-
-    if (comparePassword) {
-      throw ApiError.badRequest('Такой пароль уже используется');
-    }
-
-    newPassword = await bcrypt.hash(newPassword, 5);
-    user.password = newPassword;
-
-    await user.save();
-
-    const token = generateJwt(user.id, user.email, user.role);
-    return token;
+    return this.getProfileWhithoutIdentifier(profile);
   }
 }
 

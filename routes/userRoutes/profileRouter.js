@@ -6,14 +6,15 @@ import profileController from '../../controllers/userControllers/profileControll
 const router = express.Router();
 const adminRouter = express.Router();
 
-router.get('/', authMiddleware);
-router.put('/', authMiddleware);
+router.get('/', authMiddleware, profileController.getOneById);
+router.put('/', authMiddleware, profileController.update);
+router.put('/', authMiddleware, profileController.create);
 
 //роуты админов
 adminRouter.use(checkRoleMiddleware('ADMIN'));
 
 adminRouter.get('/all', profileController.getAll); //+
-adminRouter.get('/:id');
+adminRouter.get('/:id', profileController.getOneById); //+
 
 router.use('/admin', adminRouter);
 
