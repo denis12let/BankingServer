@@ -17,7 +17,7 @@ const bankRoutes = express.Router();
 const userRoutes = express.Router();
 
 //Базовые
-router.use('/accounts/:account', accountRoutes);
+router.use('/accounts', accountRoutes);
 router.use('/bank', bankRoutes);
 router.use('/users', userRoutes);
 
@@ -25,11 +25,11 @@ router.use('/users', userRoutes);
 accountRoutes.use('/cards', card);
 accountRoutes.use('/accountStatement', accountStatement);
 accountRoutes.use('/basket', basket);
-accountRoutes.use('/transaction', transaction);
+accountRoutes.use('/transactions', transaction);
 
 //Пользовательские
 userRoutes.use('', user);
-userRoutes.use('/profile', profile);
+userRoutes.use('/profiles', profile);
 
 //Банковские
 bankRoutes.use('/news', bankNews);

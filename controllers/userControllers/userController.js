@@ -40,7 +40,9 @@ class UserController {
   async getOneById(req, res, next) {
     try {
       const { id: userId, role } = req.user;
-      const id = req.params.id;
+      let id = req.params.id || userId;
+      if (role === 'ADMIN') id = req.params.id;
+      else if (role === 'USER') id = userId;
 
       const user = await userServices.getById(userId, id, role);
 
@@ -87,11 +89,9 @@ class UserController {
   async update(req, res, next) {
     try {
       const userId = req.user.id;
-      const role = req.user.role;
-      const id = req.params.id;
       const password = req.body.password;
 
-      const token = await userServices.update(userId, id, password, role);
+      const token = await userServices.update(userId, password);
 
       return res.json({ token });
     } catch (error) {

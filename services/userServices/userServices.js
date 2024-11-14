@@ -128,31 +128,20 @@ class UserServices {
     };
   }
 
-  async update(userId, id, password, role) {
-    if (role === 'ADMIN') {
-      throw ApiError.forbidden('Нет доступа');
-    }
-    console.log(124);
+  async update(userId, password) {
     const requiredFields = ['password'];
     validateRequiredFields({ password }, requiredFields);
 
-    userAccessCheck(userId, id, role);
-    const user = await this.findById(userId, id, role);
+    const user = await User.findOne({ where: { id: userId } });
     checkUserExists(user);
 
-    if (password === undefined) {
-      throw ApiError.badRequest('Пожалуйста, введите пароль');
-    }
-
-    let newPassword = password;
     const comparePassword = bcrypt.compareSync(password, user.password);
-
     if (comparePassword) {
       throw ApiError.badRequest('Такой пароль уже используется');
     }
 
-    newPassword = await bcrypt.hash(newPassword, 5);
-    user.password = newPassword;
+    const hashPassword = await bcrypt.hash(password, 5);
+    user.password = hashPassword;
 
     await user.save();
 

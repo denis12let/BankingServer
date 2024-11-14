@@ -10,15 +10,14 @@ router.post('/registration', userController.registration);
 router.post('/login', userController.login);
 router.get('/auth', authMiddleware, userController.check);
 
-// Роуты для админов и обыных юзеров
-router.get('/id/:id', authMiddleware, userController.getOneById);
-
 // Роуты для ТОЛЬКО для обыных юзеров
-router.put('/:id', authMiddleware, userController.update);
+router.put('/', authMiddleware, userController.update);
+router.get('/', authMiddleware, userController.getOneById);
 
 // Роуты ТОЛЬКО для администраторов
 adminRouter.use(checkRoleMiddleware('ADMIN'));
 
+adminRouter.get('/id/:id', userController.getOneById);
 adminRouter.get('/email/:email', userController.getOneByEmail);
 adminRouter.get('/all', userController.getAll);
 adminRouter.post('/', userController.create);
