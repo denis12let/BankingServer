@@ -1,12 +1,13 @@
 import express from 'express';
+import serviceController from '../../controllers/bankControllers/serviceController.js';
 
 const router = express.Router();
 
-router.get('/');
-router.get('/:id');
+router.get('/', serviceController.getAll);
+router.get('/:id', serviceController.getOne);
 
-router.post('/');
-router.put('/:id');
-router.delete('/:id');
+router.post('/', serviceController.create);
+router.put('/:id', serviceController.update);
+router.delete('/:id', serviceController.delete);
 
 export default router;

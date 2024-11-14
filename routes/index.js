@@ -28,7 +28,7 @@ accountRoutes.use('/basket', basket);
 accountRoutes.use('/transaction', transaction);
 
 //Пользовательские
-userRoutes.use(user);
+userRoutes.use('', user);
 userRoutes.use('/profile', profile);
 
 //Банковские

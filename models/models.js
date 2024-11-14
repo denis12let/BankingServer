@@ -64,7 +64,11 @@ export const Service = sequelize.define('service', {
   maturityDate: { type: DataTypes.DATE },
   duration: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 10 },
   minSum: { type: DataTypes.DECIMAL, allowNull: false, defaultValue: 100 },
-  type: { type: DataTypes.STRING, allowNull: false, defaultValue: 'DEPOSIT' },
+  type: {
+    type: DataTypes.ENUM('LOAN', 'DEPOSIT'),
+    allowNull: false,
+    defaultValue: 'DEPOSIT',
+  },
 });
 
 export const Bank = sequelize.define('bank', {

@@ -16,7 +16,7 @@ class BankController {
       const bankData = req.body;
       const bank = await bankServices.update(bankData);
 
-      return res.json(bank);
+      return res.json({ bank });
     } catch (error) {
       next(error);
     }
