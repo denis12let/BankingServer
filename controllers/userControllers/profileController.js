@@ -26,8 +26,9 @@ class ProfileController {
   async update(req, res, next) {
     try {
       const id = req.user.id;
+      const data = req.body;
 
-      const profile = await profileServices.update(id);
+      const profile = await profileServices.update(id, data);
 
       return res.json({ profile });
     } catch (error) {

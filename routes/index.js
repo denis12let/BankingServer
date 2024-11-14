@@ -1,4 +1,5 @@
 import express from 'express';
+import authMiddleware from '../middleware/authMiddleware.js';
 import account from './accountRoutes/accountRouter.js';
 import accountStatement from './accountRoutes/accountStatementRouter.js';
 import bankNews from './bankRoutes/bankNewsRouter.js';
@@ -17,7 +18,7 @@ const bankRoutes = express.Router();
 const userRoutes = express.Router();
 
 //Базовые
-router.use('/accounts', accountRoutes);
+router.use('/accounts', authMiddleware, accountRoutes);
 router.use('/bank', bankRoutes);
 router.use('/users', userRoutes);
 
@@ -26,17 +27,16 @@ accountRoutes.use('/cards', card);
 accountRoutes.use('/accountStatement', accountStatement);
 accountRoutes.use('/basket', basket);
 accountRoutes.use('/transactions', transaction);
+accountRoutes.use('', account);
 
 //Пользовательские
 userRoutes.use('', user);
-userRoutes.use('/profiles', profile);
+userRoutes.use('/profiles', authMiddleware, profile);
 
 //Банковские
 bankRoutes.use('/news', bankNews);
 bankRoutes.use(bank);
 bankRoutes.use('/partners', partner);
 bankRoutes.use('/services', service);
-
-router.use('/accounts', account);
 
 export default router;

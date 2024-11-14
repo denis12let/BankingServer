@@ -11,6 +11,12 @@ const generateJwt = (id, email, role) => {
 };
 
 class UserServices {
+  getUserWithoutPassword(user) {
+    const { password, ...userWithoutPassword } = user.dataValues;
+
+    return userWithoutPassword;
+  }
+
   async registration(data) {
     const { email, password } = data;
     const requiredFields = ['email', 'password'];
@@ -62,20 +68,10 @@ class UserServices {
     return user;
   }
 
-  async getById(id, role) {
+  async getById(id) {
     const user = await this.findById(id);
 
-    if (role === 'USER') {
-      return { email: user.email };
-    } else if (role === 'ADMIN') {
-      return {
-        id: user.id,
-        email: user.email,
-        role: user.role,
-      };
-    } else {
-      throw ApiError.forbidden('Нет доступа');
-    }
+    return this.getUserWithoutPassword(user);
   }
 
   async findByEmail(email) {
@@ -83,24 +79,13 @@ class UserServices {
 
     checkUserExists(user);
 
-    return {
-      id: user.id,
-      email: user.email,
-      role: user.role,
-    };
+    return this.getUserWithoutPassword(user);
   }
 
   async findAll() {
     const users = await User.findAll();
 
-    const usersWithoutPassword = users.map((user) => {
-      const userWithoutPassword = {
-        id: user.id,
-        email: user.email,
-        role: user.role,
-      };
-      return userWithoutPassword;
-    });
+    const usersWithoutPassword = users.map((user) => this.getUserWithoutPassword(user));
 
     return usersWithoutPassword;
   }
@@ -118,11 +103,7 @@ class UserServices {
       role,
     });
 
-    return {
-      id: user.id,
-      email: user.email,
-      role: user.role,
-    };
+    return this.getUserWithoutPassword(user);
   }
 
   async update(id, password) {
@@ -152,11 +133,7 @@ class UserServices {
 
     const user = await this.findById(id);
 
-    let deletedUser = {
-      id: user.id,
-      email: user.email,
-      role: user.role,
-    };
+    let deletedUser = this.getUserWithoutPassword(user);
 
     await user.destroy();
 

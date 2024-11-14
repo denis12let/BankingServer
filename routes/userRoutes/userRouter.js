@@ -15,7 +15,7 @@ router.get('/', authMiddleware, userController.getOneById);
 // Роуты ТОЛЬКО для администраторов
 adminRouter.use(checkRoleMiddleware('ADMIN'));
 
-adminRouter.get('/:id', userController.getOneById);
+adminRouter.get('/id/:id', userController.getOneById);
 adminRouter.get('/email/:email', userController.getOneByEmail);
 adminRouter.get('/all', userController.getAll);
 adminRouter.post('/', userController.create);

@@ -1,17 +1,4 @@
-import bcrypt from 'bcrypt';
-import ApiError from '../../error/ApiError.js';
-import { Profile } from '../../models/models.js';
-import { userAccessCheck } from '../../utils/accesCheck.js';
-import { checkProfileExists, checkUserExists, validateRequiredFields } from '../../utils/validationUtills.js';
-
 class ProfileServices {
-  getProfileWhithoutIdentifier(profile) {
-    const { passportIdentifier, ...profileWithoutIdentifier } = profile.dataValues;
-
-    console.log(profileWithoutIdentifier);
-    return profileWithoutIdentifier;
-  }
-
   async findById(id) {
     const profile = await Profile.findOne({ where: { userId: id } });
     checkProfileExists(profile);
@@ -23,14 +10,6 @@ class ProfileServices {
     const profile = await this.findById(id);
 
     return this.getProfileWhithoutIdentifier(profile);
-  }
-
-  async findAll() {
-    const profiles = await Profile.findAll();
-
-    const profilesWithoutIdentifier = profiles.map((profile) => this.getProfileWhithoutIdentifier(profile));
-
-    return profilesWithoutIdentifier;
   }
 
   async create(data, userId) {
