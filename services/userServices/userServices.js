@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import ApiError from '../../error/ApiError.js';
 import { User } from '../../models/models.js';
 import { checkUserExists, validateRequiredFields } from '../../utils/validationUtills.js';
+import accountServices from '../accountServices/accountServices.js';
 
 const generateJwt = (id, email, role) => {
   const token = jwt.sign({ id, email, role }, process.env.SECRET_KEY, { expiresIn: '24h' });
@@ -32,6 +33,8 @@ class UserServices {
       email,
       password: hashPassword,
     });
+
+    await accountServices.create(user.id);
 
     const token = generateJwt(user.id, user.email, user.role);
 
@@ -102,6 +105,8 @@ class UserServices {
       password: hashPassword,
       role,
     });
+
+    await accountServices.create(user.id);
 
     return this.getUserWithoutPassword(user);
   }

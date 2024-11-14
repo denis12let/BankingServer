@@ -1,23 +1,13 @@
-import profileServices from '../../services/userServices/profileServices.js';
+import accountServices from '../../services/accountServices/accountServices.js';
 
-class ProfileController {
+class AccountController {
   async getOneById(req, res, next) {
     try {
-      const id = req.params.id || req.user.id;
+      const id = req.user.id;
 
-      const profile = await profileServices.getById(id);
+      const account = await accountServices.getById(id);
 
-      return res.json({ profile });
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  async getAll(req, res, next) {
-    try {
-      const profiles = await profileServices.findAll();
-
-      return res.json({ profiles });
+      return res.json({ account });
     } catch (error) {
       next(error);
     }
@@ -28,9 +18,9 @@ class ProfileController {
       const id = req.user.id;
       const data = req.body;
 
-      const profile = await profileServices.update(id, data);
+      const account = await accountServices.update(id, data);
 
-      return res.json({ profile });
+      return res.json({ account });
     } catch (error) {
       next(error);
     }
@@ -39,15 +29,14 @@ class ProfileController {
   async create(req, res, next) {
     try {
       const id = req.user.id;
-      const data = req.body;
 
-      const profile = await profileServices.create(data, id);
+      const account = await accountServices.create(id);
 
-      return res.json({ profile });
+      return res.json({ account });
     } catch (error) {
       next(error);
     }
   }
 }
 
-export default new ProfileController();
+export default new AccountController();

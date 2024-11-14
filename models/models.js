@@ -25,7 +25,7 @@ export const Profile = sequelize.define('profile', {
 
 export const Account = sequelize.define('account', {
   id: { type: DataTypes.BIGINT, autoIncrement: true, primaryKey: true },
-  accountBalance: { type: DataTypes.DECIMAL, defaultValue: 0 },
+  balance: { type: DataTypes.DECIMAL, defaultValue: 0 },
 });
 
 export const Transaction = sequelize.define('transaction', {
@@ -39,12 +39,12 @@ export const Transaction = sequelize.define('transaction', {
 
 export const Card = sequelize.define('card', {
   id: { type: DataTypes.BIGINT, autoIncrement: true, primaryKey: true },
-  Number: { type: DataTypes.STRING, unique: true, allowNull: false },
-  Date: { type: DataTypes.DATE, allowNull: false },
+  number: { type: DataTypes.STRING, unique: true, allowNull: false },
+  date: { type: DataTypes.DATE, allowNull: false },
   CVC: { type: DataTypes.STRING, allowNull: false },
-  HolderName: { type: DataTypes.STRING, allowNull: false },
-  CustomeName: { type: DataTypes.STRING, allowNull: false },
-  Balance: { type: DataTypes.DECIMAL, allowNull: false, defaultValue: 1000 },
+  holderName: { type: DataTypes.STRING, allowNull: false },
+  customeName: { type: DataTypes.STRING, allowNull: false },
+  balance: { type: DataTypes.DECIMAL, allowNull: false, defaultValue: 1000 },
 });
 
 export const Basket = sequelize.define('basket', {

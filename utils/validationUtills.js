@@ -19,3 +19,9 @@ export const checkProfileExists = (profile) => {
     throw ApiError.notFound('Профиль пользователя не найден');
   }
 };
+
+export const checkAccountExists = (account) => {
+  if (!account) {
+    throw ApiError.notFound('Аккаунт пользователя не найден');
+  }
+};

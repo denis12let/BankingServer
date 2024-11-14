@@ -1,63 +1,35 @@
-class ProfileServices {
-  async findById(id) {
-    const profile = await Profile.findOne({ where: { userId: id } });
-    checkProfileExists(profile);
+import { Account } from '../../models/models.js';
+import { checkAccountExists } from '../../utils/validationUtills.js';
 
-    return profile;
+class AccountServices {
+  async findById(id) {
+    const account = await Account.findOne({ where: { userId: id } });
+    checkAccountExists(account);
+
+    return account;
   }
 
   async getById(id) {
-    const profile = await this.findById(id);
+    const account = await this.findById(id);
 
-    return this.getProfileWhithoutIdentifier(profile);
+    return account;
   }
 
-  async create(data, userId) {
-    const { passportIdentifier, telephoneNumber, userName, userSurname, profileImg } = data;
-    const requiredFields = ['passportIdentifier', 'telephoneNumber', 'userName', 'userSurname'];
-    validateRequiredFields(data, requiredFields);
+  async create(userId) {
+    const account = await Account.create({ userId });
 
-    const candidateProfile = await Profile.findOne({ where: { userId } });
-
-    if (candidateProfile) {
-      throw ApiError.badRequest('Профиль пользователя уже существует');
-    }
-
-    const exictingProfileTelephone = await Profile.findOne({ where: { telephoneNumber } });
-    if (exictingProfileTelephone) {
-      throw ApiError.badRequest('Профиль пользователя с таким телефоном уже существует');
-    }
-
-    const hashIdentifier = await bcrypt.hash(passportIdentifier, 5);
-
-    const profile = await Profile.create({
-      passportIdentifier: hashIdentifier,
-      telephoneNumber,
-      userName,
-      userSurname,
-      profileImg: profileImg || 'https://cdn-icons-png.flaticon.com/512/266/266033.png',
-      userId,
-    });
-
-    return this.getProfileWhithoutIdentifier(profile);
+    return account;
   }
 
   async update(id, data) {
-    const profile = await this.findById(id);
+    const account = await this.findById(id);
 
-    Object.keys(data).forEach((key) => {
-      if (key === 'passportIdentifier' || key === 'telephoneNumber') {
-        throw ApiError.badRequest(`Поле ${key} неизменяемое `);
-      }
-      if (key in profile && data[key]) {
-        profile[key] = data[key];
-      }
-    });
+    account.balance = data.balance;
 
-    await profile.save();
+    await account.save();
 
-    return this.getProfileWhithoutIdentifier(profile);
+    return account;
   }
 }
 
-export default new ProfileServices();
+export default new AccountServices();
