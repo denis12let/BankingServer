@@ -84,13 +84,13 @@ class CardServices {
   }
 
   async updateBalance(userId, data) {
-    const { type, money, number } = data;
+    const { type, amount, number } = data;
 
     // prettier-ignore
     const requiredFields =(
       data.transferType === TRANSFER_TYPE.CARD_TO_CARD 
-      ? ['type', 'money', 'number', 'secondNumber'] 
-      : ['type', 'money', 'number']);
+      ? ['type', 'amount', 'number', 'secondNumber'] 
+      : ['type', 'amount', 'number']);
 
     validateRequiredFields(data, requiredFields);
 
@@ -106,24 +106,24 @@ class CardServices {
       case TYPES.DEPOSIT:
         //Проверяем на наличие второй карты, так как если обновляем 2-ую карту, то transferType не передается
         if (data.transferType === TRANSFER_TYPE.CARD_TO_CARD) {
-          await this.updateBalance(userId, { type: TYPES.PAYMENT, money, number: data.secondNumber });
+          await this.updateBalance(userId, { type: TYPES.PAYMENT, amount, number: data.secondNumber });
         }
 
-        card.balance = +card.balance + +money;
+        card.balance = +card.balance + +amount;
 
         break;
 
       //Перевод средств
       case TYPES.PAYMENT:
-        if (+card.balance < +money) {
+        if (+card.balance < +amount) {
           throw ApiError.badRequest('Недостаточно средств');
         }
 
         if (data.transferType === TRANSFER_TYPE.CARD_TO_CARD) {
-          await this.updateBalance(userId, { type: TYPES.DEPOSIT, money, number: data.secondNumber });
+          await this.updateBalance(userId, { type: TYPES.DEPOSIT, amount, number: data.secondNumber });
         }
 
-        card.balance -= money;
+        card.balance -= amount;
 
         break;
     }

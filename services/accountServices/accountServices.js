@@ -36,24 +36,24 @@ class AccountServices {
   }
 
   async updateBalance(id, data) {
-    const { type, money, number } = data;
-    const requiredFields = ['type', 'money', 'number'];
+    const { type, amount, number } = data;
+    const requiredFields = ['type', 'amount', 'number'];
     validateRequiredFields(data, requiredFields);
 
     const account = await this.findById(id);
 
     if (type === TYPES.DEPOSIT) {
-      await cardServices.updateBalance(id, { type: TYPES.PAYMENT, money, number, transferType: TRANSFER_TYPE.ACCOUNT_CARD });
+      await cardServices.updateBalance(id, { type: TYPES.PAYMENT, amount, number, transferType: TRANSFER_TYPE.ACCOUNT_CARD });
 
-      account.balance = +account.balance + +money;
+      account.balance = +account.balance + +amount;
     } else if (type === TYPES.PAYMENT) {
-      if (+account.balance < +money) {
+      if (+account.balance < +amount) {
         throw ApiError.badRequest('Недостаточно средств');
       }
 
-      await cardServices.updateBalance(id, { type: TYPES.DEPOSIT, money, number, transferType: TRANSFER_TYPE.ACCOUNT_CARD });
+      await cardServices.updateBalance(id, { type: TYPES.DEPOSIT, amount, number, transferType: TRANSFER_TYPE.ACCOUNT_CARD });
 
-      account.balance -= money;
+      account.balance -= amount;
     }
 
     await account.save();

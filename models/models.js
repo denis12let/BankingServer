@@ -25,11 +25,15 @@ export const Account = sequelize.define('account', {
 export const Transaction = sequelize.define('transaction', {
   id: { type: DataTypes.BIGINT, autoIncrement: true, primaryKey: true },
   amount: { type: DataTypes.DECIMAL, allowNull: false },
-  currency: { type: DataTypes.STRING, allowNull: false }, //валюта на русском
+  currency: { type: DataTypes.STRING, allowNull: false, defaultValue: 'BYN' }, //валюта на русском
   date: { type: DataTypes.DATE, allowNull: false },
   status: { type: DataTypes.STRING, allowNull: false, defaultValue: 'Одобрено' },
   description: { type: DataTypes.STRING },
   type: { type: DataTypes.ENUM('PAYMENT', 'DEPOSIT'), allowNull: false },
+  source: { type: DataTypes.STRING, defaultValue: 'BANK', allowNull: false },
+  destination: { type: DataTypes.STRING, defaultValue: 'BANK', allowNull: false },
+  cardFrom: { type: DataTypes.STRING },
+  cardTo: { type: DataTypes.STRING },
 });
 
 export const Card = sequelize.define('card', {
