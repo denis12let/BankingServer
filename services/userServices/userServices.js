@@ -25,7 +25,7 @@ class UserServices {
 
     const candidate = await User.findOne({ where: { email } });
     if (candidate) {
-      return next(ApiError.badRequest('Пользователь с таким email существует'));
+      throw ApiError.badRequest('Пользователь с таким email существует');
     }
 
     const hashPassword = await bcrypt.hash(password, 5);
@@ -33,7 +33,6 @@ class UserServices {
       email,
       password: hashPassword,
     });
-
     await accountServices.create(user.id);
 
     const token = generateJwt(user.id, user.email, user.role);
@@ -51,7 +50,7 @@ class UserServices {
 
     let comparePassword = bcrypt.compareSync(password, user.password);
     if (!comparePassword) {
-      return next(ApiError.badRequest('Неверный пароль'));
+      throw ApiError.badRequest('Неверный пароль');
     }
 
     const token = generateJwt(user.id, user.email, user.role);

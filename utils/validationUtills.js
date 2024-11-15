@@ -25,3 +25,9 @@ export const checkAccountExists = (account) => {
     throw ApiError.notFound('Аккаунт пользователя не найден');
   }
 };
+
+export const checkCardExists = (card) => {
+  if (!card) {
+    throw ApiError.notFound('Данной карты не существует');
+  }
+};

@@ -1,7 +1,6 @@
 import express from 'express';
 import authMiddleware from '../middleware/authMiddleware.js';
 import account from './accountRoutes/accountRouter.js';
-import accountStatement from './accountRoutes/accountStatementRouter.js';
 import bankNews from './bankRoutes/bankNewsRouter.js';
 import bank from './bankRoutes/bankRouter.js';
 import basket from './accountRoutes/basketRouter.js';
@@ -24,7 +23,6 @@ router.use('/users', userRoutes);
 
 //Для аккаунта
 accountRoutes.use('/cards', card);
-accountRoutes.use('/accountStatement', accountStatement);
 accountRoutes.use('/basket', basket);
 accountRoutes.use('/transactions', transaction);
 accountRoutes.use('', account);

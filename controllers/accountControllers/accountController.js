@@ -13,6 +13,18 @@ class AccountController {
     }
   }
 
+  // async create(req, res, next) {
+  //   try {
+  //     const id = req.user.id;
+
+  //     const account = await accountServices.create(id);
+
+  //     return res.json({ account });
+  //   } catch (error) {
+  //     next(error);
+  //   }
+  // }
+
   async update(req, res, next) {
     try {
       const id = req.user.id;
@@ -26,11 +38,12 @@ class AccountController {
     }
   }
 
-  async create(req, res, next) {
+  async updateBalance(req, res, next) {
     try {
       const id = req.user.id;
+      const data = req.body;
 
-      const account = await accountServices.create(id);
+      const account = await accountServices.updateBalance(id, data);
 
       return res.json({ account });
     } catch (error) {

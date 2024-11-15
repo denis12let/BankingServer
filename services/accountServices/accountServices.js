@@ -1,5 +1,8 @@
+import { TRANSFER_TYPE, TYPES } from '../../constants/paymentConstants.js';
+import ApiError from '../../error/ApiError.js';
 import { Account } from '../../models/models.js';
-import { checkAccountExists } from '../../utils/validationUtills.js';
+import { checkAccountExists, validateRequiredFields } from '../../utils/validationUtills.js';
+import cardServices from './cardServices.js';
 
 class AccountServices {
   async findById(id) {
@@ -17,6 +20,7 @@ class AccountServices {
 
   async create(userId) {
     const account = await Account.create({ userId });
+    console.log(123);
 
     return account;
   }
@@ -30,6 +34,31 @@ class AccountServices {
 
     return account;
   }
-}
 
+  async updateBalance(id, data) {
+    const { type, money, number } = data;
+    const requiredFields = ['type', 'money', 'number'];
+    validateRequiredFields(data, requiredFields);
+
+    const account = await this.findById(id);
+
+    if (type === TYPES.DEPOSIT) {
+      await cardServices.updateBalance(id, { type: TYPES.PAYMENT, money, number, transferType: TRANSFER_TYPE.ACCOUNT_CARD });
+
+      account.balance = +account.balance + +money;
+    } else if (type === TYPES.PAYMENT) {
+      if (+account.balance < +money) {
+        throw ApiError.badRequest('Недостаточно средств');
+      }
+
+      await cardServices.updateBalance(id, { type: TYPES.DEPOSIT, money, number, transferType: TRANSFER_TYPE.ACCOUNT_CARD });
+
+      account.balance -= money;
+    }
+
+    await account.save();
+
+    return { message: 'Операция проведена успешно' };
+  }
+}
 export default new AccountServices();

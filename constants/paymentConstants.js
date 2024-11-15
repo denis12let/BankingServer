@@ -1,0 +1,9 @@
+export const TYPES = {
+  DEPOSIT: 'DEPOSIT',
+  PAYMENT: 'PAYMENT',
+};
+
+export const TRANSFER_TYPE = {
+  CARD_TO_CARD: 'CARD-TO-CARD',
+  ACCOUNT_CARD: 'ACCOUNT-CARD',
+};

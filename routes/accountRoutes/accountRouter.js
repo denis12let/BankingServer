@@ -5,5 +5,6 @@ const router = express.Router();
 
 router.get('/', accountController.getOneById);
 router.put('/', accountController.update);
+router.post('/balance', accountController.updateBalance);
 
 export default router;

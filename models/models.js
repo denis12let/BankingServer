@@ -8,12 +8,6 @@ export const User = sequelize.define('user', {
   role: { type: DataTypes.STRING, defaultValue: 'USER' },
 });
 
-export const AccountStatement = sequelize.define('account_statement', {
-  id: { type: DataTypes.BIGINT, autoIncrement: true, primaryKey: true },
-  transferAmount: { type: DataTypes.DECIMAL, defaultValue: 0 },
-  depositAmount: { type: DataTypes.DECIMAL, defaultValue: 0 },
-});
-
 export const Profile = sequelize.define('profile', {
   id: { type: DataTypes.BIGINT, autoIncrement: true, primaryKey: true },
   passportIdentifier: { type: DataTypes.STRING, unique: true, allowNull: false },
@@ -33,8 +27,9 @@ export const Transaction = sequelize.define('transaction', {
   amount: { type: DataTypes.DECIMAL, allowNull: false },
   currency: { type: DataTypes.STRING, allowNull: false }, //валюта на русском
   date: { type: DataTypes.DATE, allowNull: false },
-  status: { type: DataTypes.STRING, allowNull: false },
+  status: { type: DataTypes.STRING, allowNull: false, defaultValue: 'Одобрено' },
   description: { type: DataTypes.STRING },
+  type: { type: DataTypes.ENUM('PAYMENT', 'DEPOSIT'), allowNull: false },
 });
 
 export const Card = sequelize.define('card', {
@@ -43,7 +38,7 @@ export const Card = sequelize.define('card', {
   date: { type: DataTypes.DATE, allowNull: false },
   CVC: { type: DataTypes.STRING, allowNull: false },
   holderName: { type: DataTypes.STRING, allowNull: false },
-  customeName: { type: DataTypes.STRING, allowNull: false },
+  customName: { type: DataTypes.STRING, allowNull: false },
   balance: { type: DataTypes.DECIMAL, allowNull: false, defaultValue: 1000 },
 });
 
@@ -105,9 +100,6 @@ Profile.belongsTo(User);
 
 User.hasOne(Account);
 Account.belongsTo(User);
-
-Account.hasOne(AccountStatement);
-AccountStatement.belongsTo(Account);
 
 Account.hasMany(Transaction);
 Transaction.belongsTo(Account);
