@@ -54,14 +54,14 @@ export const Basket = sequelize.define('basket', {
 export const BasketService = sequelize.define('basket_service', {
   id: { type: DataTypes.BIGINT, autoIncrement: true, primaryKey: true },
   amount: { type: DataTypes.DECIMAL, allowNull: false },
+  serviceDate: { type: DataTypes.DATE, allowNull: false },
+  maturityDate: { type: DataTypes.DATE, allowNull: false },
 });
 
 export const Service = sequelize.define('service', {
   id: { type: DataTypes.BIGINT, autoIncrement: true, primaryKey: true },
   name: { type: DataTypes.STRING, allowNull: false },
   interest: { type: DataTypes.DECIMAL, allowNull: false },
-  serviceDate: { type: DataTypes.DATE },
-  maturityDate: { type: DataTypes.DATE },
   duration: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 10 },
   minSum: { type: DataTypes.DECIMAL, allowNull: false, defaultValue: 100 },
   type: {

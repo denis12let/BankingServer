@@ -63,6 +63,15 @@ class AccountServices {
     if (type === SERVICE_TYPES.DEPOSIT) {
       checkBalance(account.balance, amount);
 
+      await transactionServices.create({
+        type: type === TYPES.DEPOSIT ? TYPES.PAYMENT : TYPES.DEPOSIT,
+        amount,
+        number,
+        transferType: TRANSFER_TYPE.ACCOUNT_CARD,
+        description: data.description,
+        accountId: account.id,
+      });
+
       account.balance -= amount;
     } else if (type === SERVICE_TYPES.LOAN) {
       account.balance = +account.balance + +amount;

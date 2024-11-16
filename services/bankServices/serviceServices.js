@@ -12,6 +12,15 @@ class ServiceServices {
     return service;
   }
 
+  async findByServiceId(id) {
+    const service = await Service.findByPk(id);
+    if (!service) {
+      throw ApiError.notFound('Услуга не найдена');
+    }
+
+    return service;
+  }
+
   async findAll(type) {
     let services;
 
