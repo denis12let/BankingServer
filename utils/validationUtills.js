@@ -37,3 +37,9 @@ export const checkTransactionExists = (transaction) => {
     throw ApiError.notFound('Данной транзакции не существует');
   }
 };
+
+export const checkBasketServiceExists = (basketService) => {
+  if (!basketService) {
+    throw ApiError.notFound('Данной услуги не существует');
+  }
+};

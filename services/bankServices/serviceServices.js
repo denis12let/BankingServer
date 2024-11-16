@@ -6,7 +6,7 @@ class ServiceServices {
   async findById(id) {
     const service = await Service.findOne({ where: { id } });
     if (!service) {
-      throw ApiError.notFound('Реклама не найдена');
+      throw ApiError.notFound('Услуга не найдена');
     }
 
     return service;

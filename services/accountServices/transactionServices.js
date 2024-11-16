@@ -1,8 +1,6 @@
-import ApiError from '../../error/ApiError.js';
 import { Transaction } from '../../models/models.js';
 import { checkTransactionExists, validateRequiredFields } from '../../utils/validationUtills.js';
 import accountServices from '../accountServices/accountServices.js';
-import { TRANSFER_TYPE, TYPES } from '../../constants/paymentConstants.js';
 
 class TransactionServices {
   async findById(userId, id) {
@@ -28,7 +26,6 @@ class TransactionServices {
 
   async getAll(userId, query) {
     const transactions = this.findAll(userId);
-    // const {type, min, maxSum, timeFrom, timeTo, }
 
     return transactions;
   }
