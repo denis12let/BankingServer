@@ -27,9 +27,9 @@ class BasketServiceServices {
     return basketServices;
   }
   //доделать
-  async create(data) {
-    const { amount, type, source, destination, cardFrom, cardTo, accountId } = data;
-    const requiredFields = ['amount', 'type', 'source', 'destination'];
+  async create(userId, serviceId, data) {
+    const { amount } = data;
+    const requiredFields = ['amount'];
     validateRequiredFields(data, requiredFields);
 
     const trancsaction = await Transaction.create({

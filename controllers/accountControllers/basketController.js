@@ -38,14 +38,28 @@ class BasketController {
     }
   }
 
+  async addService(req, res, next) {
+    try {
+      const userId = req.user.id;
+      const serviceId = req.params.id;
+      const data = req.body;
+
+      const service = await basketServices.addService(userId, serviceId, data);
+
+      return res.json({ service });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async deleteService(req, res, next) {
     try {
       const userId = req.user.id;
-      const id = req.params.id;
+      const serviceId = req.params.id;
 
-      const card = await cardServices.delete(userId, id);
+      const service = await basketServices.deleteService(userId, serviceId);
 
-      return res.json({ card });
+      return res.json({ service });
     } catch (error) {
       next(error);
     }

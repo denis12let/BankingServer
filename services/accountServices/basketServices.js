@@ -40,33 +40,22 @@ class BasketServices {
     return services;
   }
 
-  async addService(data) {
-    const { amount, type, source, destination, cardFrom, cardTo, accountId } = data;
-    const requiredFields = ['amount', 'type', 'source', 'destination'];
-    validateRequiredFields(data, requiredFields);
+  async addService(userId, serviceId, data) {
+    const service = await basketServiceServices.create(userId, serviceId, data);
 
-    const trancsaction = await Transaction.create({
-      amount,
-      date: new Date(),
-      type,
-      source,
-      destination,
-      cardFrom,
-      cardTo,
-      accountId,
-    });
+    const basket = await this.findBasketById(userId);
+    basket.servicesCount = +basket.servicesCount + 1;
 
-    return trancsaction;
+    return service;
   }
 
-  async deleteService(userId, id) {
-    const transaction = await this.findById(userId, id);
+  async deleteService(userId, serviceId) {
+    const deletedService = await basketServiceServices.delete(userId, serviceId);
 
-    let deletedTransaction = transaction;
+    const basket = await this.findBasketById(userId);
+    basket.servicesCount = +basket.servicesCount - 1;
 
-    await transaction.destroy();
-
-    return deletedTransaction;
+    return deletedService;
   }
 
   async create(accountId) {
