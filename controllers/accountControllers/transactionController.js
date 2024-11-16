@@ -1,15 +1,16 @@
 import { TRANSFER_TYPE } from '../../constants/paymentConstants.js';
 import cardServices from '../../services/accountServices/cardServices.js';
+import transactionServices from '../../services/accountServices/transactionServices.js';
 
-class CardController {
+class TransactionController {
   async getOneById(req, res, next) {
     try {
       const userId = req.user.id;
       const id = req.params.id;
 
-      const card = await cardServices.getById(userId, id);
+      const transaction = await transactionServices.getById(userId, id);
 
-      return res.json({ card });
+      return res.json({ transaction });
     } catch (error) {
       next(error);
     }
@@ -18,49 +19,24 @@ class CardController {
   async getAll(req, res, next) {
     try {
       const userId = req.user.id;
-      const cards = await cardServices.findAll(userId);
+      const queryData = req.query;
 
-      return res.json({ cards });
+      const transactions = await transactionServices.getAll(userId, queryData);
+
+      return res.json({ transactions });
     } catch (error) {
       next(error);
     }
   }
 
-  async create(req, res, next) {
+  async getCalendar(req, res, next) {
     try {
       const userId = req.user.id;
-      const data = req.body;
+      const queryData = req.query;
 
-      const card = await cardServices.create(userId, data);
+      const transactions = await transactionServices.getCalendar(userId, queryData);
 
-      return res.json({ card });
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  async update(req, res, next) {
-    try {
-      const userId = req.user.id;
-      const id = req.params.id;
-      const data = req.body;
-
-      const card = await cardServices.update(userId, id, data);
-
-      return res.json({ card });
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  async updateBalance(req, res, next) {
-    try {
-      const userId = req.user.id;
-      const data = { ...req.body, transferType: TRANSFER_TYPE.CARD_TO_CARD };
-
-      const card = await cardServices.updateBalance(userId, data);
-
-      return res.json({ card });
+      return res.json({ transactions });
     } catch (error) {
       next(error);
     }
@@ -71,13 +47,13 @@ class CardController {
       const userId = req.user.id;
       const id = req.params.id;
 
-      const card = await cardServices.delete(userId, id);
+      const transaction = await transactionServices.delete(userId, id);
 
-      return res.json({ card });
+      return res.json({ transaction });
     } catch (error) {
       next(error);
     }
   }
 }
 
-export default new CardController();
+export default new TransactionController();

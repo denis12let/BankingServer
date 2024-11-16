@@ -4,6 +4,7 @@ import ApiError from '../../error/ApiError.js';
 import { User } from '../../models/models.js';
 import { checkUserExists, validateRequiredFields } from '../../utils/validationUtills.js';
 import accountServices from '../accountServices/accountServices.js';
+import cardServices from '../accountServices/cardServices.js';
 
 const generateJwt = (id, email, role) => {
   const token = jwt.sign({ id, email, role }, process.env.SECRET_KEY, { expiresIn: '24h' });
@@ -74,6 +75,14 @@ class UserServices {
     const user = await this.findById(id);
 
     return this.getUserWithoutPassword(user);
+  }
+
+  async getUserEmailByCardNumber(number) {
+    const card = await cardServices.findByNumber(number);
+    const account = await accountServices.findByAccountId(card.accountId);
+    const user = await this.getById(account.userId);
+
+    return user.email;
   }
 
   async findByEmail(email) {

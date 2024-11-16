@@ -29,7 +29,7 @@ export const Transaction = sequelize.define('transaction', {
   date: { type: DataTypes.DATE, allowNull: false },
   status: { type: DataTypes.STRING, allowNull: false, defaultValue: 'Одобрено' },
   description: { type: DataTypes.STRING },
-  type: { type: DataTypes.ENUM('PAYMENT', 'DEPOSIT'), allowNull: false },
+  type: { type: DataTypes.ENUM('PAYMENT', 'DEPOSIT', 'TRANSFER'), allowNull: false },
   source: { type: DataTypes.STRING, defaultValue: 'BANK', allowNull: false },
   destination: { type: DataTypes.STRING, defaultValue: 'BANK', allowNull: false },
   cardFrom: { type: DataTypes.STRING },

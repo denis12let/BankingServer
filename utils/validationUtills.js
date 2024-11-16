@@ -31,3 +31,9 @@ export const checkCardExists = (card) => {
     throw ApiError.notFound('Данной карты не существует');
   }
 };
+
+export const checkTransactionExists = (transaction) => {
+  if (!transaction) {
+    throw ApiError.notFound('Данной транзакции не существует');
+  }
+};

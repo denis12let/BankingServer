@@ -1,6 +1,7 @@
 export const TYPES = {
   DEPOSIT: 'DEPOSIT',
   PAYMENT: 'PAYMENT',
+  TRANSFER: 'TRANSFER',
 };
 
 export const TRANSFER_TYPE = {
