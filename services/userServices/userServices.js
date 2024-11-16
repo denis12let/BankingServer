@@ -85,6 +85,12 @@ class UserServices {
     return user.email;
   }
 
+  async getUserEmailById(id) {
+    const user = await this.getById(id);
+
+    return user.email;
+  }
+
   async findByEmail(email) {
     const user = await User.findOne({ where: { email } });
 

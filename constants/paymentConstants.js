@@ -14,3 +14,8 @@ export const SERVICE_TYPES = {
   DEPOSIT: 'DEPOSIT',
   LOAN: 'LOAN',
 };
+
+export const ACTION_TYPE = {
+  DELETE: 'DELETE',
+  ADD: 'ADD',
+};

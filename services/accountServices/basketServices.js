@@ -47,11 +47,12 @@ class BasketServices {
   }
 
   async addService(userId, serviceId, data) {
-    basket.servicesCount = +basket.servicesCount + 1;
-
     const service = await basketServiceServices.create(userId, serviceId, data);
 
     const basket = await this.findBasketById(userId);
+
+    basket.servicesCount = +basket.servicesCount + 1;
+    await basket.save();
 
     return service;
   }
@@ -61,7 +62,8 @@ class BasketServices {
 
     const deletedService = await basketServiceServices.delete(userId, serviceId);
 
-    basket.servicesCount = +basket.servicesCount - 1;
+    basket.servicesCount -= 1;
+    await basket.save();
 
     return deletedService;
   }

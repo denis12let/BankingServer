@@ -1,4 +1,4 @@
-import { SERVICE_TYPES, TRANSFER_TYPE, TYPES } from '../../constants/paymentConstants.js';
+import { ACTION_TYPE, SERVICE_TYPES, TRANSFER_TYPE, TYPES } from '../../constants/paymentConstants.js';
 import ApiError from '../../error/ApiError.js';
 import { Account } from '../../models/models.js';
 import { checkAccountExists, checkBalance, validateRequiredFields } from '../../utils/validationUtills.js';
@@ -47,33 +47,30 @@ class AccountServices {
   }
 
   async updateBalanceAccountService(id, data, account) {
-    const { type, amount } = data;
+    const { type, amount, actionType } = data;
     const requiredFields = ['amount'];
     validateRequiredFields(data, requiredFields);
 
-    //  const transactionDetails = {
-    //    type: type === TYPES.DEPOSIT ? TYPES.PAYMENT : TYPES.DEPOSIT,
-    //    amount,
-    //    number,
-    //    transferType: TRANSFER_TYPE.ACCOUNT_CARD,
-    //    description: data.description,
-    //    accountId: account.id,
-    //  };
+    const BANK_NAME = 'BANK';
+
+    const transactionDetails = {
+      type: type === SERVICE_TYPES.LOAN ? TYPES.DEPOSIT : TYPES.PAYMENT,
+      amount,
+      source: actionType === ACTION_TYPE.ADD ? BANK_NAME : await userServices.getUserEmailById(id),
+      destination: actionType === ACTION_TYPE.ADD ? await userServices.getUserEmailById(id) : BANK_NAME,
+      description: data.description,
+      accountId: account.id,
+    };
 
     if (type === SERVICE_TYPES.DEPOSIT) {
       checkBalance(account.balance, amount);
 
-      await transactionServices.create({
-        type: type === TYPES.DEPOSIT ? TYPES.PAYMENT : TYPES.DEPOSIT,
-        amount,
-        number,
-        transferType: TRANSFER_TYPE.ACCOUNT_CARD,
-        description: data.description,
-        accountId: account.id,
-      });
+      await transactionServices.create(transactionDetails);
 
       account.balance -= amount;
     } else if (type === SERVICE_TYPES.LOAN) {
+      await transactionServices.create(transactionDetails);
+
       account.balance = +account.balance + +amount;
     }
   }
@@ -123,6 +120,7 @@ class AccountServices {
         break;
 
       case TRANSFER_TYPE.ACCOUNT_SERVICE:
+        await this.updateBalanceAccountService(id, data, account);
         break;
     }
 

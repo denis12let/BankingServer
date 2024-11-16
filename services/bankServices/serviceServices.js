@@ -4,15 +4,6 @@ import bankServices from './bankServices.js';
 
 class ServiceServices {
   async findById(id) {
-    const service = await Service.findOne({ where: { id } });
-    if (!service) {
-      throw ApiError.notFound('Услуга не найдена');
-    }
-
-    return service;
-  }
-
-  async findByServiceId(id) {
     const service = await Service.findByPk(id);
     if (!service) {
       throw ApiError.notFound('Услуга не найдена');
@@ -35,18 +26,15 @@ class ServiceServices {
 
   async create(data) {
     const bank = await bankServices.findById(1);
-    const { name, amount, interest, serviceDate, maturityDate, duration, minSum, type } = data;
+    const { name, interest, duration, minSum, type } = data;
 
-    if (!name || !amount || !interest || !serviceDate || !maturityDate || !duration || !minSum || !type) {
+    if (!name || !interest || !duration || !minSum || !type) {
       throw ApiError.badRequest('Не все обязательные поля заполнены');
     }
 
     const service = await Service.create({
       name,
-      amount,
       interest,
-      serviceDate,
-      maturityDate,
       duration,
       minSum,
       type,
