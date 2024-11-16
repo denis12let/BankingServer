@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import ApiError from '../../error/ApiError.js';
 import { Card } from '../../models/models.js';
-import { checkCardExists, validateRequiredFields } from '../../utils/validationUtills.js';
+import { checkBalance, checkCardExists, validateRequiredFields } from '../../utils/validationUtills.js';
 import accountServices from '../accountServices/accountServices.js';
 import { userCardAccessCheck } from '../../utils/accesCheck.js';
 import { TRANSFER_TYPE, TYPES } from '../../constants/paymentConstants.js';
@@ -174,9 +174,7 @@ class CardServices {
 
       //Перевод средств
       case TYPES.PAYMENT:
-        if (+card.balance < +amount) {
-          throw ApiError.badRequest('Недостаточно средств');
-        }
+        checkBalance(card.balance, amount);
 
         if (data.transferType === TRANSFER_TYPE.CARD_TO_CARD) {
           await this.updateBalance(userId, {

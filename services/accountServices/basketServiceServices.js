@@ -1,9 +1,11 @@
 import { BasketService, Transaction } from '../../models/models.js';
 import { checkTransactionExists, validateRequiredFields } from '../../utils/validationUtills.js';
 import accountServices from '../accountServices/accountServices.js';
+import serviceServices from '../bankServices/serviceServices.js';
+import basketServices from './basketServices.js';
 
 class BasketServiceServices {
-  async findById(basketId, id) {
+  async findByBasketIdAndServiceId(basketId, id) {
     const basketService = await BasketService.findOne({ where: { id, basketId } });
 
     return basketService;
@@ -26,27 +28,27 @@ class BasketServiceServices {
 
     return basketServices;
   }
+
   //доделать
   async create(userId, serviceId, data) {
     const { amount } = data;
     const requiredFields = ['amount'];
     validateRequiredFields(data, requiredFields);
 
-    const trancsaction = await Transaction.create({
+    const basketId = await basketServices.getBasketIdByUserId(userId);
+
+    const baskerService = await BasketService.create({
       amount,
-      date: new Date(),
-      type,
-      source,
-      destination,
-      cardFrom,
-      cardTo,
-      accountId,
+      basketId,
+      serviceId,
     });
 
-    return trancsaction;
+    return baskerService;
   }
+
   //доделать
-  async delete(basketId, id) {
+  async delete(userId, id) {
+    const basketId = await basketServices.getBasketIdByUserId(userId);
     const basketService = await this.findById(basketId, id);
 
     let deletedBasketService = basketService;

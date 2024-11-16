@@ -7,4 +7,10 @@ export const TYPES = {
 export const TRANSFER_TYPE = {
   CARD_TO_CARD: 'CARD-TO-CARD',
   ACCOUNT_CARD: 'ACCOUNT-CARD',
+  ACCOUNT_SERVICE: 'ACCOUNT=SERVICE',
+};
+
+export const SERVICE_TYPES = {
+  DEPOSIT: 'DEPOSIT',
+  LOAN: 'LOAN',
 };

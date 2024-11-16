@@ -1,3 +1,4 @@
+import { TRANSFER_TYPE } from '../../constants/paymentConstants.js';
 import accountServices from '../../services/accountServices/accountServices.js';
 
 class AccountController {
@@ -31,9 +32,9 @@ class AccountController {
       const id = req.user.id;
       const data = req.body;
 
-      const account = await accountServices.updateBalance(id, data);
+      const message = await accountServices.updateBalance(id, { ...data, transferType: TRANSFER_TYPE.ACCOUNT_CARD });
 
-      return res.json({ account });
+      return res.json({ message });
     } catch (error) {
       next(error);
     }

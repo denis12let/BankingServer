@@ -13,6 +13,12 @@ class BasketServices {
     return basket;
   }
 
+  async getBasketIdByUserId(userId) {
+    const basket = await this.findBasketById(userId);
+
+    return basket.id;
+  }
+
   async getBasketSize(userId) {
     const basket = await this.findBasketById(userId);
 
@@ -41,18 +47,20 @@ class BasketServices {
   }
 
   async addService(userId, serviceId, data) {
+    basket.servicesCount = +basket.servicesCount + 1;
+
     const service = await basketServiceServices.create(userId, serviceId, data);
 
     const basket = await this.findBasketById(userId);
-    basket.servicesCount = +basket.servicesCount + 1;
 
     return service;
   }
 
   async deleteService(userId, serviceId) {
+    const basket = await this.findBasketById(userId);
+
     const deletedService = await basketServiceServices.delete(userId, serviceId);
 
-    const basket = await this.findBasketById(userId);
     basket.servicesCount = +basket.servicesCount - 1;
 
     return deletedService;

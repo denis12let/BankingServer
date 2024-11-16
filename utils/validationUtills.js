@@ -8,6 +8,12 @@ export const validateRequiredFields = (fields, requiredFields) => {
   }
 };
 
+export const checkBalance = (num1, num2) => {
+  if (+num1 < +num2) {
+    throw ApiError.notFound('Недостаточно средств');
+  }
+};
+
 export const checkUserExists = (user) => {
   if (!user) {
     throw ApiError.notFound('Пользователь не найден');
