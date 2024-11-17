@@ -56,6 +56,11 @@ export const BasketService = sequelize.define('basket_service', {
   amount: { type: DataTypes.DECIMAL, allowNull: false },
   serviceDate: { type: DataTypes.DATE, allowNull: false },
   maturityDate: { type: DataTypes.DATE, allowNull: false },
+  type: {
+    type: DataTypes.ENUM('PAYMENT', 'DEPOSIT'),
+    allowNull: false,
+    defaultValue: 'DEPOSIT',
+  },
 });
 
 export const Service = sequelize.define('service', {

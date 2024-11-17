@@ -3,8 +3,9 @@ import serviceServices from '../../services/bankServices/serviceServices.js';
 class ServiceController {
   async getAll(req, res, next) {
     try {
-      const type = req.query.type;
-      const services = await serviceServices.findAll(type);
+      const query = req.query;
+
+      const services = await serviceServices.getAll(query);
 
       return res.json({ services });
     } catch (error) {
@@ -26,9 +27,9 @@ class ServiceController {
 
   async create(req, res, next) {
     try {
-      const serviceData = req.body;
+      const data = req.body;
 
-      const service = await serviceServices.create(serviceData);
+      const service = await serviceServices.create(data);
 
       return res.json({ service });
     } catch (error) {
@@ -39,9 +40,9 @@ class ServiceController {
   async update(req, res, next) {
     try {
       const serviceId = req.params.id;
-      const serviceData = req.body;
+      const data = req.body;
 
-      const service = await serviceServices.update(serviceId, serviceData);
+      const service = await serviceServices.update(serviceId, data);
 
       return res.json({ service });
     } catch (error) {
@@ -52,6 +53,7 @@ class ServiceController {
   async delete(req, res, next) {
     try {
       const serviceId = req.params.id;
+
       const service = await serviceServices.delete(serviceId);
 
       return res.json({ service });

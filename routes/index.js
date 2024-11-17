@@ -18,17 +18,17 @@ const userRoutes = express.Router();
 
 //Базовые
 router.use('/accounts', authMiddleware, accountRoutes);
-router.use('/bank', bankRoutes);
+router.use('/bank', authMiddleware, bankRoutes);
 router.use('/users', userRoutes);
 
 //Для аккаунта
 accountRoutes.use('/cards', card);
 accountRoutes.use('/basket', basket);
 accountRoutes.use('/transactions', transaction);
-accountRoutes.use('', account);
+accountRoutes.use(account);
 
 //Пользовательские
-userRoutes.use('', user);
+userRoutes.use(user);
 userRoutes.use('/profiles', authMiddleware, profile);
 
 //Банковские

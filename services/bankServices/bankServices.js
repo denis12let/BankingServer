@@ -1,12 +1,11 @@
-import ApiError from '../../error/ApiError.js';
 import { Bank } from '../../models/models.js';
+import { updateEntity } from '../../utils/updateUtils.js';
+import { checkBankExist } from '../../utils/validationUtills.js';
 
 class BankServices {
   async findById(id) {
-    const bank = await Bank.findOne({ where: { id } });
-    if (!bank) {
-      throw ApiError.notFound('Банк не найден');
-    }
+    const bank = await Bank.findByPk(id);
+    checkBankExist(bank);
 
     return bank;
   }
@@ -14,12 +13,7 @@ class BankServices {
   async update(data) {
     const bank = await this.findById(1);
 
-    const { name, telephoneNumber, img } = data;
-
-    bank.name = name || bank.name;
-    bank.telephoneNumber = telephoneNumber || bank.telephoneNumber;
-    bank.img = img || bank.img;
-
+    updateEntity(bank, data);
     await bank.save();
 
     return bank;

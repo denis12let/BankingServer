@@ -9,11 +9,11 @@ router.get('/', profileController.getOneById);
 router.post('/', profileController.create);
 router.put('/', profileController.update);
 
-//роуты админов
+// Роуты ТОЛЬКО для администраторов
 adminRouter.use(checkRoleMiddleware('ADMIN'));
 
-adminRouter.get('/all', profileController.getAll); //+
-adminRouter.get('/id/:id', profileController.getOneById); //+
+adminRouter.get('/all', profileController.getAll);
+adminRouter.get('/id/:id', profileController.getOneById);
 
 router.use('/admin', adminRouter);
 

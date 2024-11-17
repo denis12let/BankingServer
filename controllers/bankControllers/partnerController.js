@@ -25,9 +25,9 @@ class PartnerController {
 
   async create(req, res, next) {
     try {
-      const partnerData = req.body;
+      const data = req.body;
 
-      const partner = await partnerServices.create(partnerData);
+      const partner = await partnerServices.create(data);
 
       return res.json({ partner });
     } catch (error) {
@@ -38,9 +38,9 @@ class PartnerController {
   async update(req, res, next) {
     try {
       const partnerId = req.params.id;
-      const partnerData = req.body;
+      const data = req.body;
 
-      const partner = await partnerServices.update(partnerId, partnerData);
+      const partner = await partnerServices.update(partnerId, data);
 
       return res.json({ partner });
     } catch (error) {
@@ -51,6 +51,7 @@ class PartnerController {
   async delete(req, res, next) {
     try {
       const partnerId = req.params.id;
+
       const partner = await partnerServices.delete(partnerId);
 
       return res.json({ partner });

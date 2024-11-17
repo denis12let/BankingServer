@@ -7,6 +7,7 @@ import { userCardAccessCheck } from '../../utils/accesCheck.js';
 import { TRANSFER_TYPE, TYPES } from '../../constants/paymentConstants.js';
 import userServices from '../userServices/userServices.js';
 import transactionServices from './transactionServices.js';
+import { updateEntity } from '../../utils/updateUtils.js';
 
 class CardServices {
   getCardWithoutCVC(card) {
@@ -78,12 +79,11 @@ class CardServices {
   }
 
   async update(userId, id, data) {
-    const { customName } = data;
     const requiredFields = ['customName'];
     validateRequiredFields(data, requiredFields);
 
     const card = await this.findById(userId, id);
-    card.customName = customName;
+    updateEntity(data, card);
 
     await card.save();
 
@@ -106,6 +106,43 @@ class CardServices {
     //Проверка, что карта, с которой переводят, принадлежит юзеру. Условие не работает только тогда, когда происходит обновление второй карты при переводе с карты на карту, так как transferType не передается при повторном вызове
     if (data.transferType) {
       await userCardAccessCheck(userId, card.accountId);
+    }
+
+    switch (type) {
+      //Получение средств
+      case TYPES.DEPOSIT:
+        //Проверяем на наличие второй карты, так как если обновляем 2-ую карту, то transferType не передается
+        if (data.transferType === TRANSFER_TYPE.CARD_TO_CARD) {
+          await this.updateBalance(userId, {
+            type: TYPES.PAYMENT,
+            amount,
+            number: data.secondNumber,
+            isTransferBetweenUserCards: data.isTransferBetweenUserCards,
+            prevNumber: number,
+          });
+        }
+
+        card.balance = +card.balance + +amount;
+
+        break;
+
+      //Перевод средств
+      case TYPES.PAYMENT:
+        checkBalance(card.balance, amount);
+
+        if (data.transferType === TRANSFER_TYPE.CARD_TO_CARD) {
+          await this.updateBalance(userId, {
+            type: TYPES.DEPOSIT,
+            amount,
+            number: data.secondNumber,
+            isTransferBetweenUserCards: data.isTransferBetweenUserCards,
+            prevNumber: number,
+          });
+        }
+
+        card.balance -= amount;
+
+        break;
     }
 
     //Создание транзакции для аккаунт -> карта, карта -> аккаунт, если перевод на карту другого юзера
@@ -152,43 +189,6 @@ class CardServices {
           accountId: await this.getAccountIdByCardNumber(number),
         });
       }
-    }
-
-    switch (type) {
-      //Получение средств
-      case TYPES.DEPOSIT:
-        //Проверяем на наличие второй карты, так как если обновляем 2-ую карту, то transferType не передается
-        if (data.transferType === TRANSFER_TYPE.CARD_TO_CARD) {
-          await this.updateBalance(userId, {
-            type: TYPES.PAYMENT,
-            amount,
-            number: data.secondNumber,
-            isTransferBetweenUserCards: data.isTransferBetweenUserCards,
-            prevNumber: number,
-          });
-        }
-
-        card.balance = +card.balance + +amount;
-
-        break;
-
-      //Перевод средств
-      case TYPES.PAYMENT:
-        checkBalance(card.balance, amount);
-
-        if (data.transferType === TRANSFER_TYPE.CARD_TO_CARD) {
-          await this.updateBalance(userId, {
-            type: TYPES.DEPOSIT,
-            amount,
-            number: data.secondNumber,
-            isTransferBetweenUserCards: data.isTransferBetweenUserCards,
-            prevNumber: number,
-          });
-        }
-
-        card.balance -= amount;
-
-        break;
     }
 
     await card.save();

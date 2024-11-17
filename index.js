@@ -3,10 +3,8 @@ import cors from 'cors';
 import sequelize from './db.js';
 import './models/models.js';
 import router from './routes/index.js';
-import { Bank } from './models/models.js';
 import { initAdmin, initBank } from './utils/initData.js';
 import errorHandlingMiddleware from './middleware/errorHandlingMiddleware.js';
-import ApiError from './error/ApiError.js';
 import notFoundMiddleware from './middleware/notFoundMiddleware.js';
 
 const PORT = process.env.PORT;
@@ -33,7 +31,4 @@ const start = async () => {
 
 start();
 
-//Добавление общих методов туда, где старый код
-//Добавление ошибок - везде
-//Добавление middleware (доступ) в маршрутах
 //Добавление поле type (LOAN, DEPOSIT) в таблицу basketService

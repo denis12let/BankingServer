@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { Op } from 'sequelize';
 import ApiError from '../../error/ApiError.js';
 import { User } from '../../models/models.js';
 import { checkUserExists, validateRequiredFields } from '../../utils/validationUtills.js';
@@ -99,8 +100,12 @@ class UserServices {
     return this.getUserWithoutPassword(user);
   }
 
-  async findAll() {
-    const users = await User.findAll();
+  async findAll(query) {
+    const { email } = query;
+
+    const users = await User.findAll({
+      where: email ? { email: { [Op.like]: `%${email}%` } } : undefined,
+    });
 
     const usersWithoutPassword = users.map((user) => this.getUserWithoutPassword(user));
 

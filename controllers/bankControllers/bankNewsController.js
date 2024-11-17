@@ -25,9 +25,9 @@ class BankNewsController {
 
   async create(req, res, next) {
     try {
-      const bankNewsData = req.body;
+      const data = req.body;
 
-      const bankNews = await bankNewsServices.create(bankNewsData);
+      const bankNews = await bankNewsServices.create(data);
 
       return res.json({ bankNews });
     } catch (error) {
@@ -38,9 +38,9 @@ class BankNewsController {
   async update(req, res, next) {
     try {
       const bankNewsId = req.params.id;
-      const bankNewsData = req.body;
+      const data = req.body;
 
-      const bankNews = await bankNewsServices.update(bankNewsId, bankNewsData);
+      const bankNews = await bankNewsServices.update(bankNewsId, data);
 
       return res.json({ bankNews });
     } catch (error) {
@@ -51,6 +51,7 @@ class BankNewsController {
   async delete(req, res, next) {
     try {
       const bankNewsId = req.params.id;
+
       const bankNews = await bankNewsServices.delete(bankNewsId);
 
       return res.json({ bankNews });

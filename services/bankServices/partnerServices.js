@@ -1,13 +1,12 @@
-import ApiError from '../../error/ApiError.js';
 import { Partner } from '../../models/models.js';
+import { updateEntity } from '../../utils/updateUtils.js';
+import { checkPartnerExist } from '../../utils/validationUtills.js';
 import bankServices from './bankServices.js';
 
 class PartnerServices {
   async findById(id) {
-    const partner = await Partner.findOne({ where: { id } });
-    if (!partner) {
-      throw ApiError.notFound('Реклама не найдена');
-    }
+    const partner = await Partner.findByPk(id);
+    checkPartnerExist(partner);
 
     return partner;
   }
@@ -21,10 +20,8 @@ class PartnerServices {
   async create(data) {
     const bank = await bankServices.findById(1);
     const { title, titleDescription, description, img, telephoneNumber } = data;
-
-    if (!title || !titleDescription || !description || !img) {
-      throw ApiError.badRequest('Не все обязательные поля заполнены');
-    }
+    const requiredFields = ['title', 'telephoneNumber'];
+    validateRequiredFields(data, requiredFields);
 
     const partner = await Partner.create({
       title,
@@ -41,11 +38,7 @@ class PartnerServices {
   async update(id, data) {
     const partner = await this.findById(id);
 
-    Object.keys(data).forEach((key) => {
-      if (key in partner && data[key]) {
-        partner[key] = data[key];
-      }
-    });
+    updateEntity(data, partner);
 
     await partner.save();
 
@@ -54,7 +47,7 @@ class PartnerServices {
 
   async delete(id) {
     const partner = await this.findById(id);
-    const deletedPartner = partner.toJSON();
+    const deletedPartner = partner;
 
     await partner.destroy();
 

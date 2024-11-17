@@ -39,10 +39,9 @@ class UserController {
 
   async getOneById(req, res, next) {
     try {
-      const role = req.user.role;
       const id = req.params.id || req.user.id;
 
-      const user = await userServices.getById(id, role);
+      const user = await userServices.getById(id);
 
       return res.json({ user });
     } catch (error) {
@@ -64,7 +63,9 @@ class UserController {
 
   async getAll(req, res, next) {
     try {
-      const users = await userServices.findAll();
+      const query = req.query;
+
+      const users = await userServices.findAll(query);
 
       return res.json({ users });
     } catch (error) {

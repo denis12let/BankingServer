@@ -1,36 +1,44 @@
-import ApiError from '../../error/ApiError.js';
 import { Service } from '../../models/models.js';
+import { updateEntity } from '../../utils/updateUtils.js';
+import { checkServiceExist } from '../../utils/validationUtills.js';
 import bankServices from './bankServices.js';
 
 class ServiceServices {
   async findById(id) {
     const service = await Service.findByPk(id);
-    if (!service) {
-      throw ApiError.notFound('Услуга не найдена');
-    }
+    checkServiceExist(service);
 
     return service;
   }
 
-  async findAll(type) {
-    let services;
-
-    if (type) {
-      services = await Service.findAll({ where: { type } });
-    } else {
-      services = await Service.findAll();
-    }
+  async findAll() {
+    const services = await Service.findAll();
 
     return services;
+  }
+
+  async getAll(query) {
+    const { type } = query;
+    const services = await this.findAll();
+
+    const filteredServices = services.filter((service) => {
+      let isValid = true;
+
+      if (type) {
+        isValid = isValid && service.type === type;
+      }
+
+      return isValid;
+    });
+
+    return filteredServices;
   }
 
   async create(data) {
     const bank = await bankServices.findById(1);
     const { name, interest, duration, minSum, type } = data;
-
-    if (!name || !interest || !duration || !minSum || !type) {
-      throw ApiError.badRequest('Не все обязательные поля заполнены');
-    }
+    const requiredFields = ['name', 'interest', 'duration', 'minSum', 'type'];
+    validateRequiredFields(data, requiredFields);
 
     const service = await Service.create({
       name,
@@ -47,11 +55,7 @@ class ServiceServices {
   async update(id, data) {
     const service = await this.findById(id);
 
-    Object.keys(data).forEach((key) => {
-      if (key in service && data[key]) {
-        service[key] = data[key];
-      }
-    });
+    updateEntity(data, service);
 
     await service.save();
 
@@ -60,7 +64,7 @@ class ServiceServices {
 
   async delete(id) {
     const service = await this.findById(id);
-    const deletedservice = service.toJSON();
+    const deletedservice = service;
 
     await service.destroy();
 

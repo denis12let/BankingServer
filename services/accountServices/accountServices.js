@@ -1,5 +1,4 @@
 import { ACTION_TYPE, SERVICE_TYPES, TRANSFER_TYPE, TYPES } from '../../constants/paymentConstants.js';
-import ApiError from '../../error/ApiError.js';
 import { Account } from '../../models/models.js';
 import { checkAccountExists, checkBalance, validateRequiredFields } from '../../utils/validationUtills.js';
 import userServices from '../userServices/userServices.js';

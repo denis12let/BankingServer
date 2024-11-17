@@ -1,13 +1,12 @@
-import ApiError from '../../error/ApiError.js';
 import { BankNews } from '../../models/models.js';
+import { updateEntity } from '../../utils/updateUtils.js';
+import { checkBankNewsExist } from '../../utils/validationUtills.js';
 import bankServices from './bankServices.js';
 
 class BankNewsServices {
   async findById(id) {
-    const bankNews = await BankNews.findOne({ where: { id } });
-    if (!bankNews) {
-      throw ApiError.notFound('Новость не найдена');
-    }
+    const bankNews = await BankNews.findByPk(id);
+    checkBankNewsExist(bankNews);
 
     return bankNews;
   }
@@ -21,10 +20,8 @@ class BankNewsServices {
   async create(data) {
     const bank = await bankServices.findById(1);
     const { title, description, img, backgroundColor, textColor } = data;
-
-    if (!title || !description || !img) {
-      throw ApiError.badRequest('Не все обязательные поля заполнены');
-    }
+    const requiredFields = ['title'];
+    validateRequiredFields(data, requiredFields);
 
     const bankNews = await BankNews.create({
       title,
@@ -41,11 +38,7 @@ class BankNewsServices {
   async update(id, data) {
     const bankNews = await this.findById(id);
 
-    Object.keys(data).forEach((key) => {
-      if (key in bankNews && data[key]) {
-        bankNews[key] = data[key];
-      }
-    });
+    updateEntity(data, bankNews);
 
     await bankNews.save();
 
@@ -54,7 +47,7 @@ class BankNewsServices {
 
   async delete(id) {
     const bankNews = await this.findById(id);
-    const deletedBankNews = bankNews.toJSON();
+    const deletedBankNews = bankNews;
 
     await bankNews.destroy();
 

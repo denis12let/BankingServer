@@ -30,15 +30,21 @@ class TransactionServices {
     return transaction;
   }
 
-  async findAll(userId) {
+  async findUserAll(userId) {
     const account = await accountServices.findById(userId);
     const transactions = await Transaction.findAll({ where: { accountId: account.id } });
 
     return transactions;
   }
 
+  async findUsersAll() {
+    const transactions = await Transaction.findAll();
+
+    return transactions;
+  }
+
   async getAll(userId, query) {
-    const transactions = await this.findAll(userId);
+    const transactions = userId ? await this.findUserAll(userId) : await this.findUsersAll();
 
     const { minSum, maxSum, type, dateFrom, dateTo, sortBy = 'date', sortOrder = 'desc' } = query;
 
@@ -88,7 +94,7 @@ class TransactionServices {
   }
 
   async getCalendar(userId, query) {
-    const transactions = await this.findAll(userId);
+    const transactions = await this.findUserAll(userId);
     const { month, year } = query;
 
     const monthNumber = parseInt(month, 10);

@@ -1,6 +1,4 @@
-import { TRANSFER_TYPE } from '../../constants/paymentConstants.js';
 import basketServices from '../../services/accountServices/basketServices.js';
-import cardServices from '../../services/accountServices/cardServices.js';
 
 class BasketController {
   async getBasketSize(req, res, next) {

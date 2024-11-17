@@ -1,26 +1,20 @@
-import { ACTION_TYPE, SERVICE_TYPES, TRANSFER_TYPE } from '../../constants/paymentConstants.js';
-import ApiError from '../../error/ApiError.js';
-import { BasketService, Transaction } from '../../models/models.js';
-import { checkBalance, checkTransactionExists, validateRequiredFields } from '../../utils/validationUtills.js';
+import { ACTION_TYPE, SERVICE_TYPES, TRANSFER_TYPE, TYPES } from '../../constants/paymentConstants.js';
+import { BasketService } from '../../models/models.js';
+import { checkBalance, checkServiceExist, validateRequiredFields } from '../../utils/validationUtills.js';
 import accountServices from '../accountServices/accountServices.js';
 import serviceServices from '../bankServices/serviceServices.js';
 import basketServices from './basketServices.js';
 
 class BasketServiceServices {
-  async findByBasketIdAndServiceId(basketId, id) {
-    const basketService = await BasketService.findOne({ where: { id, basketId } });
+  async getByBasketServiceIdAndBasketId(serviceId, basketId) {
+    const basketService = await this.findById(serviceId, basketId);
 
     return basketService;
   }
 
-  async getByBasketIdAndServiceId(basketId, id) {
-    const basketService = await this.findById(basketId, id);
-
-    return basketService;
-  }
-
-  async findById(id) {
-    const basketService = await BasketService.findByPk(id);
+  async findById(serviceId, basketId) {
+    const basketService = await BasketService.findOne({ where: { basketId, id: serviceId } });
+    checkServiceExist(basketService);
 
     return basketService;
   }
@@ -64,6 +58,7 @@ class BasketServiceServices {
       amount: amount * (1 + +service.interest / 100),
       serviceDate: new Date(),
       maturityDate: maturityDate,
+      type: service.type,
       basketId,
       serviceId,
     });
@@ -72,7 +67,8 @@ class BasketServiceServices {
   }
 
   async delete(userId, id) {
-    const basketService = await this.findById(id);
+    const basketId = await basketService.getBasketIdByUserId(userId);
+    const basketService = await this.findById(id, basketId);
 
     const service = await serviceServices.findById(basketService.serviceId);
 

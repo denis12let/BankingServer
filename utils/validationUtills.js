@@ -49,3 +49,27 @@ export const checkBasketServiceExists = (basketService) => {
     throw ApiError.notFound('Данной услуги не существует');
   }
 };
+
+export const checkServiceExist = (service) => {
+  if (!service) {
+    throw ApiError.notFound('Данной услуги не существует');
+  }
+};
+
+export const checkBankExist = (bank) => {
+  if (!bank) {
+    throw ApiError.notFound('Данного банка не существует');
+  }
+};
+
+export const checkPartnerExist = (partner) => {
+  if (!partner) {
+    throw ApiError.notFound('Данной рекламы не существует');
+  }
+};
+
+export const checkBankNewsExist = (bankNews) => {
+  if (!bankNews) {
+    throw ApiError.notFound('Данной новости не существует');
+  }
+};

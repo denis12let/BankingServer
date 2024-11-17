@@ -1,12 +1,10 @@
-import ApiError from '../../error/ApiError.js';
-import { Basket, Transaction } from '../../models/models.js';
-import { checkTransactionExists, validateRequiredFields } from '../../utils/validationUtills.js';
+import { Basket } from '../../models/models.js';
+import { checkServiceExist } from '../../utils/validationUtills.js';
 import accountServices from '../accountServices/accountServices.js';
-import { TRANSFER_TYPE, TYPES } from '../../constants/paymentConstants.js';
 import basketServiceServices from './basketServiceServices.js';
 
 class BasketServices {
-  async findBasketById(userId) {
+  async findBasketByUserId(userId) {
     const account = await accountServices.findById(userId);
     const basket = await Basket.findOne({ where: { accountId: account.id } });
 
@@ -14,41 +12,54 @@ class BasketServices {
   }
 
   async getBasketIdByUserId(userId) {
-    const basket = await this.findBasketById(userId);
+    const basket = await this.findBasketByUserId(userId);
 
     return basket.id;
   }
 
   async getBasketSize(userId) {
-    const basket = await this.findBasketById(userId);
+    const basket = await this.findBasketByUserId(userId);
 
     return basket.servicesCount;
   }
 
-  async getOneService(userId, id) {
-    const basket = await this.findBasketById(userId);
-    const service = await basketServiceServices.getByBasketIdAndServiceId(basket.id, id);
+  async getOneService(userId, serviceId) {
+    const basketId = await this.getBasketIdByUserId(userId);
+    const service = await basketServiceServices.getByBasketServiceIdAndBasketId(serviceId, serviceId);
+    checkServiceExist(service);
 
     return service;
   }
 
   async findAllServices(userId) {
-    const basket = await this.findBasketById(userId);
+    const basket = await this.findBasketByUserId(userId);
     const services = await basketServiceServices.getAll(basket.id);
 
     return services;
   }
 
   async getAllServices(userId, query) {
+    const { type } = query;
+
     const services = this.findAllServices(userId);
 
-    return services;
+    const filteredServices = services.filter((service) => {
+      let isValid = true;
+
+      if (type) {
+        isValid = isValid && service.type === type;
+      }
+
+      return isValid;
+    });
+
+    return filteredServices;
   }
 
   async addService(userId, serviceId, data) {
     const service = await basketServiceServices.create(userId, serviceId, data);
 
-    const basket = await this.findBasketById(userId);
+    const basket = await this.findBasketByUserId(userId);
 
     basket.servicesCount = +basket.servicesCount + 1;
     await basket.save();
@@ -57,7 +68,7 @@ class BasketServices {
   }
 
   async deleteService(userId, serviceId) {
-    const basket = await this.findBasketById(userId);
+    const basket = await this.findBasketByUserId(userId);
 
     const deletedService = await basketServiceServices.delete(userId, serviceId);
 

@@ -1,5 +1,3 @@
-import { TRANSFER_TYPE } from '../../constants/paymentConstants.js';
-import cardServices from '../../services/accountServices/cardServices.js';
 import transactionServices from '../../services/accountServices/transactionServices.js';
 
 class TransactionController {
@@ -16,10 +14,23 @@ class TransactionController {
     }
   }
 
-  async getAll(req, res, next) {
+  async getUserAll(req, res, next) {
     try {
       const userId = req.user.id;
       const queryData = req.query;
+
+      const transactions = await transactionServices.getAll(userId, queryData);
+
+      return res.json({ transactions });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getUsersAll(req, res, next) {
+    try {
+      const queryData = req.query;
+      const userId = null;
 
       const transactions = await transactionServices.getAll(userId, queryData);
 

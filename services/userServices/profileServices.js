@@ -1,18 +1,17 @@
 import bcrypt from 'bcrypt';
 import ApiError from '../../error/ApiError.js';
 import { Profile } from '../../models/models.js';
-import { userAccessCheck } from '../../utils/accesCheck.js';
 import { checkProfileExists, checkUserExists, validateRequiredFields } from '../../utils/validationUtills.js';
+import { updateEntity } from '../../utils/updateUtils.js';
 
 class ProfileServices {
   getProfileWhithoutIdentifier(profile) {
     const { passportIdentifier, ...profileWithoutIdentifier } = profile.dataValues;
 
-    console.log(profileWithoutIdentifier);
     return profileWithoutIdentifier;
   }
 
-  async findById(id) {
+  async findByUserId(id) {
     const profile = await Profile.findOne({ where: { userId: id } });
     checkProfileExists(profile);
 
@@ -20,7 +19,7 @@ class ProfileServices {
   }
 
   async getById(id) {
-    const profile = await this.findById(id);
+    const profile = await this.findByUserId(id);
 
     return this.getProfileWhithoutIdentifier(profile);
   }
@@ -39,7 +38,6 @@ class ProfileServices {
     validateRequiredFields(data, requiredFields);
 
     const candidateProfile = await Profile.findOne({ where: { userId } });
-
     if (candidateProfile) {
       throw ApiError.badRequest('Профиль пользователя уже существует');
     }
@@ -64,16 +62,9 @@ class ProfileServices {
   }
 
   async update(id, data) {
-    const profile = await this.findById(id);
+    const profile = await this.findByUserId(id);
 
-    Object.keys(data).forEach((key) => {
-      if (key === 'passportIdentifier' || key === 'telephoneNumber') {
-        throw ApiError.badRequest(`Поле ${key} неизменяемое `);
-      }
-      if (key in profile && data[key]) {
-        profile[key] = data[key];
-      }
-    });
+    updateEntity(data, profile, { passportIdentifier, telephoneNumber });
 
     await profile.save();
 

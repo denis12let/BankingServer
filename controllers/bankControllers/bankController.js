@@ -13,8 +13,8 @@ class BankController {
 
   async update(req, res, next) {
     try {
-      const bankData = req.body;
-      const bank = await bankServices.update(bankData);
+      const data = req.body;
+      const bank = await bankServices.update(data);
 
       return res.json({ bank });
     } catch (error) {
