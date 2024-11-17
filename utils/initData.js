@@ -1,3 +1,4 @@
+import bcrypt from 'bcrypt';
 import { Bank, User } from '../models/models.js';
 
 export const initBank = async () => {
@@ -10,12 +11,18 @@ export const initBank = async () => {
 
 export const initAdmin = async () => {
   const admin = await User.findOne({ where: { role: 'ADMIN' } });
+  const { email, password, role } = {
+    email: 'admin@mail.ru',
+    password: 'admin',
+    role: 'ADMIN',
+  };
 
+  const hashPassword = await bcrypt.hash(password, 5);
   if (!admin) {
     await User.create({
-      email: 'amdin@mail.ru',
-      password: 'admin',
-      role: 'ADMIN',
+      email,
+      password: hashPassword,
+      role,
     });
   }
 };

@@ -41,7 +41,6 @@ class BasketServices {
 
   async getAllServices(userId, query) {
     const services = this.findAllServices(userId);
-    // const {type, min, maxSum, timeFrom, timeTo, }
 
     return services;
   }
