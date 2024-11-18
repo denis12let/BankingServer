@@ -30,5 +30,3 @@ const start = async () => {
 };
 
 start();
-
-//Добавление поле type (LOAN, DEPOSIT) в таблицу basketService
