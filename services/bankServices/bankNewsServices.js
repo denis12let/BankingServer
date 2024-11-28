@@ -38,7 +38,7 @@ class BankNewsServices {
   async update(id, data) {
     const bankNews = await this.findById(id);
 
-    updateEntity(data, bankNews);
+    updateEntity(bankNews, data);
 
     await bankNews.save();
 

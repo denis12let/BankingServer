@@ -18,7 +18,7 @@ const userRoutes = express.Router();
 
 //Базовые
 router.use('/accounts', authMiddleware, accountRoutes);
-router.use('/bank', authMiddleware, bankRoutes);
+router.use('/bank', bankRoutes);
 router.use('/users', userRoutes);
 
 //Для аккаунта

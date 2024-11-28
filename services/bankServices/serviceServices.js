@@ -55,7 +55,7 @@ class ServiceServices {
   async update(id, data) {
     const service = await this.findById(id);
 
-    updateEntity(data, service);
+    updateEntity(service, data);
 
     await service.save();
 

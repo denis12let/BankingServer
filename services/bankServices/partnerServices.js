@@ -1,6 +1,6 @@
 import { Partner } from '../../models/models.js';
 import { updateEntity } from '../../utils/updateUtils.js';
-import { checkPartnerExist } from '../../utils/validationUtills.js';
+import { checkPartnerExist, validateRequiredFields } from '../../utils/validationUtills.js';
 import bankServices from './bankServices.js';
 
 class PartnerServices {
@@ -38,7 +38,7 @@ class PartnerServices {
   async update(id, data) {
     const partner = await this.findById(id);
 
-    updateEntity(data, partner);
+    updateEntity(partner, data);
 
     await partner.save();
 

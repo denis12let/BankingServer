@@ -83,7 +83,7 @@ class CardServices {
     validateRequiredFields(data, requiredFields);
 
     const card = await this.findById(userId, id);
-    updateEntity(data, card);
+    updateEntity(card, data);
 
     await card.save();
 

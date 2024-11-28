@@ -79,12 +79,13 @@ export const Service = sequelize.define('service', {
 export const Bank = sequelize.define('bank', {
   id: { type: DataTypes.BIGINT, autoIncrement: true, primaryKey: true },
   name: { type: DataTypes.STRING, unique: true, allowNull: false, defaultValue: 'Bank' },
-  telehoneNumber: { type: DataTypes.STRING, unique: true, allowNull: false, defaultValue: '+375 (29) 000 00 00' },
+  telephoneNumber: { type: DataTypes.STRING, unique: true, allowNull: false, defaultValue: '+375 (29) 000 00 00' },
   img: {
     type: DataTypes.STRING,
     allowNull: false,
     defaultValue: 'https://cdn3.iconfinder.com/data/icons/business-1086/48/Business-10-512.png',
   },
+  description: { type: DataTypes.STRING, allowNull: false },
 });
 
 export const Partner = sequelize.define('partner', {

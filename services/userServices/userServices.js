@@ -22,6 +22,7 @@ class UserServices {
 
   async registration(data) {
     const { email, password } = data;
+    console.log(data);
     const requiredFields = ['email', 'password'];
     validateRequiredFields(data, requiredFields);
 

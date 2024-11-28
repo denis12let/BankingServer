@@ -64,7 +64,7 @@ class ProfileServices {
   async update(id, data) {
     const profile = await this.findByUserId(id);
 
-    updateEntity(data, profile, { passportIdentifier, telephoneNumber });
+    updateEntity(profile, data, { passportIdentifier, telephoneNumber });
 
     await profile.save();
 
