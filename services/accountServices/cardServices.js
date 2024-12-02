@@ -16,6 +16,16 @@ class CardServices {
     return cardWithoutCVC;
   }
 
+  async isTransferBetweenUserCards(number, secondNumber) {
+    console.log(100);
+
+    const isTransferBetweenUserCards =
+      secondNumber && (await userServices.getUserEmailByCardNumber(number)) === (await userServices.getUserEmailByCardNumber(secondNumber));
+    console.log(101);
+
+    return isTransferBetweenUserCards;
+  }
+
   async findById(userId, id) {
     const account = await accountServices.findById(userId);
     const card = await Card.findOne({ where: { id, accountId: account.id } });
@@ -45,7 +55,7 @@ class CardServices {
 
   async findAll(userId) {
     const account = await accountServices.findById(userId);
-    const cards = await Card.findAll({ where: { accountId: account.id } });
+    const cards = await Card.findAll({ where: { accountId: account.id }, order: [['createdAt', 'ASC']] });
 
     const cardsWithoutCVC = cards.map((card) => this.getCardWithoutCVC(card));
 
@@ -62,13 +72,16 @@ class CardServices {
       throw ApiError.badRequest('Такая карта уже зарегистрирована');
     }
 
+    const [year, month] = date.split('-');
+    const dateObject = new Date(year, month - 1, 1);
+
     const account = await accountServices.findById(userId);
 
     const hashCVC = await bcrypt.hash(CVC, 5);
 
     const card = await Card.create({
       number,
-      date,
+      date: dateObject,
       CVC: hashCVC,
       holderName,
       customName,
@@ -92,7 +105,7 @@ class CardServices {
 
   async updateBalance(userId, data) {
     const { type, amount, number, secondNumber } = data;
-
+    console.log(1);
     // prettier-ignore
     const requiredFields =(
       data.transferType === TRANSFER_TYPE.CARD_TO_CARD 
@@ -100,6 +113,10 @@ class CardServices {
       : ['type', 'amount', 'number']);
 
     validateRequiredFields(data, requiredFields);
+    console.log(2);
+
+    const isTransferBetweenUserCards = await this.isTransferBetweenUserCards(data.number, data.secondNumber);
+    console.log(3);
 
     const card = await this.findByNumber(number);
 
@@ -107,6 +124,7 @@ class CardServices {
     if (data.transferType) {
       await userCardAccessCheck(userId, card.accountId);
     }
+    console.log(4);
 
     switch (type) {
       //Получение средств
@@ -117,8 +135,8 @@ class CardServices {
             type: TYPES.PAYMENT,
             amount,
             number: data.secondNumber,
-            isTransferBetweenUserCards: data.isTransferBetweenUserCards,
             prevNumber: number,
+            isTransferBetweenUserCards,
           });
         }
 
@@ -128,6 +146,8 @@ class CardServices {
 
       //Перевод средств
       case TYPES.PAYMENT:
+        console.log(5);
+
         checkBalance(card.balance, amount);
 
         if (data.transferType === TRANSFER_TYPE.CARD_TO_CARD) {
@@ -135,15 +155,17 @@ class CardServices {
             type: TYPES.DEPOSIT,
             amount,
             number: data.secondNumber,
-            isTransferBetweenUserCards: data.isTransferBetweenUserCards,
             prevNumber: number,
+            isTransferBetweenUserCards,
           });
         }
+        console.log(6);
 
         card.balance -= amount;
 
         break;
     }
+    console.log(7);
 
     //Создание транзакции для аккаунт -> карта, карта -> аккаунт, если перевод на карту другого юзера
     if (data.transferType === TRANSFER_TYPE.ACCOUNT_CARD) {
@@ -161,9 +183,7 @@ class CardServices {
 
     //Создание транзакций для карта -> карта для первой карты
     else if (data.transferType === TRANSFER_TYPE.CARD_TO_CARD) {
-      const isTransferBetweenUserCards =
-        (await userServices.getUserEmailByCardNumber(number)) === (await userServices.getUserEmailByCardNumber(secondNumber));
-      data.isTransferBetweenUserCards = isTransferBetweenUserCards;
+      console.log(8);
 
       await transactionServices.create({
         amount,
@@ -175,7 +195,10 @@ class CardServices {
         description: data.description,
         accountId: await this.getAccountIdByCardNumber(number),
       });
+      console.log(9);
     } else {
+      console.log(10);
+
       //создание транзакции карта -> карта для второй карты, если это не перевод между своими картами
       if (!data.isTransferBetweenUserCards) {
         await transactionServices.create({
@@ -188,12 +211,15 @@ class CardServices {
           description: data.description,
           accountId: await this.getAccountIdByCardNumber(number),
         });
+        console.log(11);
       }
     }
+    console.log(12);
 
     await card.save();
+    console.log(13);
 
-    return { message: 'Операция проведена успешно' };
+    return card;
   }
 
   async delete(userId, id) {

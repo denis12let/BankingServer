@@ -4,7 +4,7 @@ import accountController from '../../controllers/accountControllers/accountContr
 const router = express.Router();
 
 router.get('/', accountController.getOneById);
-router.put('/', accountController.update);
+router.put('/', accountController.update); //выдумка, такого не будет
 router.post('/balance', accountController.updateBalance);
 
 export default router;

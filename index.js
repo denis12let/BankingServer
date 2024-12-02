@@ -10,6 +10,7 @@ import notFoundMiddleware from './middleware/notFoundMiddleware.js';
 const PORT = process.env.PORT;
 const app = express();
 app.use(cors());
+app.options('*', cors());
 app.use(express.json());
 app.use('/api', router);
 app.use(notFoundMiddleware);

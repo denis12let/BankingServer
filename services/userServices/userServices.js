@@ -8,7 +8,7 @@ import accountServices from '../accountServices/accountServices.js';
 import cardServices from '../accountServices/cardServices.js';
 
 const generateJwt = (id, email, role) => {
-  const token = jwt.sign({ id, email, role }, process.env.SECRET_KEY, { expiresIn: '24h' });
+  const token = jwt.sign({ id, email, role }, process.env.SECRET_KEY, { expiresIn: '2400h' });
 
   return token;
 };

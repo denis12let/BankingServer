@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import ApiError from '../../error/ApiError.js';
 import { Profile } from '../../models/models.js';
-import { checkProfileExists, checkUserExists, validateRequiredFields } from '../../utils/validationUtills.js';
+import { checkProfileExists, validateRequiredFields } from '../../utils/validationUtills.js';
 import { updateEntity } from '../../utils/updateUtils.js';
 
 class ProfileServices {

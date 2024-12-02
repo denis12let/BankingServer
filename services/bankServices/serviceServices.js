@@ -1,6 +1,6 @@
 import { Service } from '../../models/models.js';
 import { updateEntity } from '../../utils/updateUtils.js';
-import { checkServiceExist } from '../../utils/validationUtills.js';
+import { checkServiceExist, validateRequiredFields } from '../../utils/validationUtills.js';
 import bankServices from './bankServices.js';
 
 class ServiceServices {
